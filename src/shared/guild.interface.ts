@@ -1,3 +1,4 @@
+import { Message } from "./message.interface"
 
 export interface GuildPartial {
     _id: string,
@@ -9,6 +10,7 @@ export interface Guild {
     _id: string,
     name: string,
     owner: string,
+    image: string | null,
     roles: Role[],
     members: Member[],
     channels: Channel[]
@@ -28,4 +30,5 @@ export interface Channel {
     _id: string,
     name: string,
     roles: Role[],
+    messages: Message[],
 }

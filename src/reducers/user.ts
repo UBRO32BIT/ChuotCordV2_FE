@@ -1,13 +1,13 @@
 import { LOAD_USER, REGISTER_USER, LOGIN_USER, LOGOUT_USER, UPDATE_USER, UserActionTypes } from "../actions/user";
 import { User } from "../shared/user.interface";
 
-export interface RootState {
+export interface IAuthState {
     isLoaded: boolean;
     isAuthenticated: boolean;
     user: User | null;
 }
 
-const initialState : RootState = {
+const initialState : IAuthState = {
     isLoaded: false,
     isAuthenticated: false,
     user: null,

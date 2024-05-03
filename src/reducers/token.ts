@@ -1,12 +1,12 @@
 import { AccessTokenActionTypes, REFRESH_TOKEN, INVALIDATE_TOKEN } from "../actions/token";
 
 export interface RootState {
-    token: string | null;
+    token: string;
     expire: Date | null;
 }
 
 const initialState : RootState = {
-    token: null,
+    token: '',
     expire: null,
 }
 

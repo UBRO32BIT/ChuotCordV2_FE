@@ -1,3 +1,4 @@
+import Chat from "../pages/Chat";
 import Home from "../pages/Home";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
@@ -8,7 +9,10 @@ interface Route {
 }
 
 const privateRoutes: Route[] = [
-   
+    {
+        path: '/chat',
+        page: Chat
+    }
 ];
 
 const adminRoutes: Route[] = [
@@ -26,19 +30,7 @@ const publicRoutes: Route[] = [
     {
         path: '/register',
         page: Register
-    }
-    // {
-    //     path: '/post/:postId',
-    //     page: PostDetail
-    // },
-    // {
-    //     path: 'timeshare/:timeshareId/book',
-    //     page: Booking
-    // },
-    // {
-    //     path: '/payment/:userId/vnpay_return',
-    //     page: VNPay
-    // },
+    },
 ];
 
 export {

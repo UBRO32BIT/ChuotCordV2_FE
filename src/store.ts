@@ -1,14 +1,22 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import userReducer from "./reducers/user";
-import accessTokenReducer from "./reducers/token";
+import userSlice from "./redux/slices/userSlice";
+import { persistReducer, persistStore } from "redux-persist";
+import storage from "redux-persist/lib/storage";
+import guildsSlice from "./redux/slices/guildsSlice";
 
 const rootReducer = combineReducers({
-    user: userReducer,
-    accessToken: accessTokenReducer,
+    user: userSlice,
+    guilds: guildsSlice,
 });
 
-const store = configureStore({
-    reducer: rootReducer,
-})
+const persistConfig = {
+    key: 'root',
+    storage,
+  }
 
-export default store;
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+export const store = configureStore({
+  reducer: persistedReducer,
+})
+export const persistor = persistStore(store);

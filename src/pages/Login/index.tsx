@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Avatar, Button, Checkbox, FormControlLabel, Grid, Link, Paper, TextField, Typography } from "@mui/material"
 import { useSnackbar } from "notistack";
 import * as yup from "yup";
@@ -9,9 +9,13 @@ import { LoginData } from "../../shared/auth.interface";
 import { User } from "../../shared/user.interface";
 import { useDispatch, useSelector } from "react-redux";
 import { LOGIN_USER } from "../../actions/user";
-import { RootState } from "../../reducers/user";
-import { REFRESH_TOKEN } from "../../actions/token";
 import { useNavigate } from "react-router-dom";
+import { setAccessToken } from "../../utils/localStorage";
+import useAuth from "../../hooks/useAuth";
+import { LOAD_GUILDS } from "../../actions/guild";
+import { GuildPartial } from "../../shared/guild.interface";
+import { loadUser } from "../../redux/slices/userSlice";
+import { loadGuild } from "../../redux/slices/guildsSlice";
 
 const loginSchema = yup.object().shape({
     username: yup.string()
@@ -21,6 +25,7 @@ const loginSchema = yup.object().shape({
 })
 
 export default function Login() {
+    const { setAuth } = useAuth();
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const user = useSelector((state: any) => state.user.user);
@@ -30,6 +35,7 @@ export default function Login() {
     const {
         register: registerLogin,
         handleSubmit: handleLoginSubmit,
+        setValue,
         formState: { errors: loginErrors }
     } = useForm({
         resolver: yupResolver(loginSchema),
@@ -50,20 +56,33 @@ export default function Login() {
                 profilePicture: result.user.profilePicture,
                 isEmailVerified: result.user.is_email_verified,
             }
-            dispatch({
-                type: LOGIN_USER, 
-                payload: userData
-            })
-            dispatch({
-                type: REFRESH_TOKEN, 
-                payload: {
-                    token: result.tokens.accessToken.token,
-                    expire: result.tokens.accessToken.exp,
-                }
-            })
+            // dispatch({
+            //     type: LOGIN_USER, 
+            //     payload: userData
+            // })
+            dispatch(loadUser(userData));
+            const guilds = result.user.guilds;
+            const guildsMap = new Map<string, GuildPartial>();
+            guilds.forEach((guild: GuildPartial) =>{
+                guildsMap.set(guild._id, guild);
+            });
+            dispatch(loadGuild(guilds));
+            // dispatch({
+            //     type: LOAD_GUILDS,
+            //     payload: guildsMap,
+            // })
+            setAccessToken(result.tokens.accessToken.token);
+            // dispatch({
+            //     type: REFRESH_TOKEN, 
+            //     payload: {
+            //         token: result.tokens.accessToken.token,
+            //         expire: result.tokens.accessToken.exp,
+            //     }
+            // })
             navigate('/chat');
         }
         catch (error: any) {
+            setValue("password", "");
             if (error && error.message) {
                 setErrorResponse(error.message);
             }

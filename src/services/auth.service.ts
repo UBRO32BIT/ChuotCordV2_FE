@@ -18,18 +18,22 @@ const Register = async (data: RegisterData) => {
 
         })
         .catch((error) => {
-
+            throw Error(error.response.data.message)
         })
 }
 
-const RefreshToken = async (data: RefreshTokenData) => {
-    return axiosClient.post(`/auth/refresh`, data)
+const RefreshToken = async () => {
+    return axiosClient.post(`/auth/refresh`)
         .then((res) => {
-
+            return res.data.data.token;
+        })
+        .catch((error) => {
+            throw Error(error.response.data.message)
         })
 }
 
 export {
     LoginWithCredentials,
     Register,
+    RefreshToken,
 }
