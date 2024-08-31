@@ -23,7 +23,7 @@ const Register = async (data: RegisterData) => {
 }
 
 const RefreshToken = async () => {
-    return axiosClient.post(`/auth/refresh`)
+    return axiosClient.post(`/auth/refresh-token`)
         .then((res) => {
             return res.data.data.token;
         })

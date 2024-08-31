@@ -48,6 +48,7 @@ axiosClient.interceptors.response.use(
         const originalRequest: AxiosRequestConfig = error.config;
 
         if (error.response && error.response.status === 401) {
+            console.log("unauth");
             if (!isRefreshing) {
                 isRefreshing = true;
                 try {

@@ -1,7 +1,7 @@
 import axiosClient from "./apiService";
 
-const getGuildsByUserId = async () => {
-    return axiosClient.get(`/users/guilds`)
+const GetMessageByChannelId = async (guildId: string, channelId: string) => {
+    return axiosClient.get(`/guilds/${guildId}/channels/${channelId}/messages`)
         .then((res) => {
             return res.data.data;
         })
@@ -12,5 +12,5 @@ const getGuildsByUserId = async () => {
 }
 
 export {
-    getGuildsByUserId,
+    GetMessageByChannelId,
 }

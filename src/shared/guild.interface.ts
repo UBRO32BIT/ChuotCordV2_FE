@@ -1,4 +1,5 @@
 import { Message } from "./message.interface"
+import { User } from "./user.interface"
 
 export interface GuildPartial {
     _id: string,
@@ -13,7 +14,7 @@ export interface Guild {
     image: string | null,
     roles: Role[],
     members: Member[],
-    channels: Channel[]
+    channels: ChannelPartial[]
 }
 
 export interface Role {
@@ -23,12 +24,26 @@ export interface Role {
 export interface Member {
     _id: string,
     roles: Role[],
-    memberId: string,
+    memberId: Partial<User>,
     timestamp: Date,
+}
+export interface ChannelPartial {
+    _id: string,
+    name: string,
 }
 export interface Channel {
     _id: string,
     name: string,
     roles: Role[],
     messages: Message[],
+}
+export interface InvitePartial {
+    _id: string,
+    string: string,
+}
+export interface Invite {
+    _id: string,
+    string: string,
+    creator: any,
+    guild: any,
 }

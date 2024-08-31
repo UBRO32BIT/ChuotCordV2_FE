@@ -3,6 +3,9 @@ import userSlice from "./redux/slices/userSlice";
 import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import guildsSlice from "./redux/slices/guildsSlice";
+import { enableMapSet } from "immer";
+
+enableMapSet();
 
 const rootReducer = combineReducers({
     user: userSlice,

@@ -10,6 +10,7 @@ import { injectStore } from './services/apiService';
 import { PersistGate } from 'redux-persist/integration/react';
 
 injectStore(store)
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );

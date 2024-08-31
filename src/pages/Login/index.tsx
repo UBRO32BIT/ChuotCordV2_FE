@@ -62,10 +62,6 @@ export default function Login() {
             // })
             dispatch(loadUser(userData));
             const guilds = result.user.guilds;
-            const guildsMap = new Map<string, GuildPartial>();
-            guilds.forEach((guild: GuildPartial) =>{
-                guildsMap.set(guild._id, guild);
-            });
             dispatch(loadGuild(guilds));
             // dispatch({
             //     type: LOAD_GUILDS,
@@ -136,7 +132,13 @@ export default function Login() {
                         helperText={loginErrors.password?.message}
                         {...registerLogin("password")}
                     />
-                    <Button type='submit' color='primary' variant="contained" style={btnstyle} fullWidth>Sign in</Button>
+                    <Button 
+                        type='submit' 
+                        color='primary' 
+                        variant="contained" 
+                        style={btnstyle} 
+                        fullWidth
+                    >Sign in</Button>
                 </form>
                 <Typography >
                     <Link href="#" variant="body2">

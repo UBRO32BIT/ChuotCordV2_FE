@@ -5,6 +5,8 @@ import { SnackbarOrigin, SnackbarProvider } from 'notistack';
 import Router from './router/router';
 import SuccessSnackbar from './components/CustomSnackbar/SuccessSnackbar';
 import ErrorSnackbar from './components/CustomSnackbar/ErrorSnackbar';
+import { io } from 'socket.io-client';
+import { SocketProvider } from './context/SocketProvider';
 
 type AnchorOrigin = SnackbarOrigin;
 const customAnchorOrigin: AnchorOrigin = {
@@ -20,20 +22,24 @@ declare module "notistack" {
   }
 }
 
-
-
 function App() {
+  React.useEffect(() => {
+
+  }, [])
+  
   return (
     <div className="App">
-      <SnackbarProvider
-        maxSnack={3}
-        anchorOrigin={customAnchorOrigin}
-        Components={{
-          successSnackbar: SuccessSnackbar,
-          errorSnackbar: ErrorSnackbar
-        }}>
-        <Router />
-      </SnackbarProvider>
+      <SocketProvider>
+        <SnackbarProvider
+          maxSnack={3}
+          anchorOrigin={customAnchorOrigin}
+          Components={{
+            successSnackbar: SuccessSnackbar,
+            errorSnackbar: ErrorSnackbar
+          }}>
+          <Router />
+        </SnackbarProvider>
+      </SocketProvider>
     </div>
   );
 }

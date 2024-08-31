@@ -1,7 +1,10 @@
+import { UserPartial } from "./user.interface";
+
 export interface Message {
     _id: string,
-    sender: string,
-    reply_id: string | null,
-    attachments: [],
-    timestamp: Date,
+    sender: UserPartial,
+    reply_id?: string,
+    content: string,
+    attachments: string[],
+    timestamp: string,
 }

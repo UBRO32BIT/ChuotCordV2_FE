@@ -7,3 +7,9 @@ export interface User {
   isEmailVerified: boolean;
   // Add other user properties as needed
 }
+
+export interface UserPartial {
+  _id: string,
+  username: string,
+  profilePicture: string,
+}

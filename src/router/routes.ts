@@ -1,5 +1,6 @@
 import Chat from "../pages/Chat";
 import Home from "../pages/Home";
+import InvitationPage from "../pages/InvitationPage";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 
@@ -10,8 +11,12 @@ interface Route {
 
 const privateRoutes: Route[] = [
     {
-        path: '/chat',
+        path: '/chat/*',
         page: Chat
+    },
+    {
+        path: '/invites/:inviteCode',
+        page: InvitationPage
     }
 ];
 
