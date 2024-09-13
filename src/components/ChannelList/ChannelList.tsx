@@ -92,6 +92,7 @@ export default function ChannelList({guild, updateGuild}: GuildInfoProps) {
         </Box>
         {channels && channels.map && channels.map((channel) => (
             <Link 
+                key={channel._id}
                 to={`channels/${channel._id}`} 
                 style={{ 
                     textDecoration: "none",

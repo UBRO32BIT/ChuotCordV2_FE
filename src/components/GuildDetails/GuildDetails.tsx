@@ -9,11 +9,26 @@ import { useSnackbar } from "notistack";
 import { Guild } from "../../shared/guild.interface";
 import ChannelDetails from "../ChannelDetails/ChannelDetails";
 import GuildOverview from "../GuildOverview/GuildOverview";
-import { Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material";
+import { useSocket } from "../../context/SocketProvider";
 
+const action = (snackbarId: any) => (
+  <>
+    <Button>
+      <Typography color={'white'}>Reconnect</Typography>
+    </Button>
+    {/* <button onClick={() => { alert(`I belong to snackbar with id ${snackbarId}`); }}>
+      Undo
+    </button>
+    <button onClick={() => { closeSnackbar(snackbarId) }}>
+      Dismiss
+    </button> */}
+  </>
+);
 export default function GuildDetails() {
   const { guildId } = useParams();
   const { enqueueSnackbar } = useSnackbar();
+  const socket = useSocket();
   const navigate = useNavigate();
   const [guild, setGuild] = React.useState<Guild>();
   const updateGuild = (updatedAttributes: any) => {
@@ -37,12 +52,35 @@ export default function GuildDetails() {
       navigate("/chat");
     }
   }
+  const joinGuildSocket = () => {
+    socket.emit('user_connect_guild', {
+        guildId: guildId,
+    })
+    // Clean up the event listener on component unmount
+    // return () => {
+    //     socket.off("chat");
+    // };
+  }
+  const fetchSocketStatus = () => {
+      if (!socket.connected) {
+          enqueueSnackbar(`You are disconnected`, { variant: "error", persist: true, preventDuplicate: true, action });
+      }
+  }
 
+  React.useEffect(() => {
+    // Set up the interval to run every second (1000 milliseconds)
+    const intervalId = setInterval(fetchSocketStatus, 1000);
+
+    // Clean up the interval on component unmount
+    return () => clearInterval(intervalId);
+}, []); // Empty dependency array ensures this runs once on mount
   React.useEffect(() => {
     if (guildId) {
       fetchGuildDetails(guildId);
     }
+    joinGuildSocket();
   }, [guildId])
+
   return <Grid container>
     {guild ? (
       <>

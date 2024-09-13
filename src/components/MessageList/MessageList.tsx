@@ -25,7 +25,7 @@ export default function MessageList() {
     }
 
     React.useEffect(() => {
-        if (bottomRef.current && messagesRef.current?.scrollTop == 0) {
+        if (bottomRef.current && messagesRef.current?.scrollTop === 0) {
             // Scroll to the bottom of the element on component load
             bottomRef.current.scrollIntoView({ behavior: 'instant' } as any);
         }
@@ -61,7 +61,7 @@ export default function MessageList() {
         overflowX: "auto",
     }}>
         {messages.map((message) => (
-            <MessageComponent {...message}/>
+            <MessageComponent key={message._id} {...message}/>
         ))}
         <Box ref={bottomRef}></Box>
     </Box>
