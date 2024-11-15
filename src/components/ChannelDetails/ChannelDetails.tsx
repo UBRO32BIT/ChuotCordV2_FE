@@ -9,10 +9,12 @@ import TagIcon from '@mui/icons-material/Tag';
 import MessageList from "../MessageList/MessageList";
 import MessageForm from "../MessageForm/MessageForm";
 import MenuIcon from '@mui/icons-material/Menu';
+import { useSocket } from "../../context/SocketProvider";
 
 export default function ChannelDetails() {
     const { guildId } = useParams();
     const { channelId } = useParams();
+    const socket = useSocket();
     const { enqueueSnackbar } = useSnackbar();
     const navigate = useNavigate();
     const [channel, setChannel] = React.useState<Channel>();
@@ -30,17 +32,26 @@ export default function ChannelDetails() {
             navigate("/chat");
         }
     }
+
+    const joinChannelSocket = () => {
+        socket.emit('user_connect_channel', {
+            channelId: channelId,
+        })
+    }
     
     React.useEffect(() => {
         if (guildId && channelId) {
             fetchChannelDetails(guildId, channelId);
         }
+        joinChannelSocket();
     }, [channelId])
     return <>
         {channel && (
             <Box sx={{
+                height: '100vh',
+                display: "flex",
+                flexDirection: "column",
                 overflow: "hidden",
-                height: "100dvh",
             }}>
                 <Box
                     sx={{
@@ -66,13 +77,16 @@ export default function ChannelDetails() {
                 </Box>
                 <Divider variant="middle" />
                 <Box sx={{
-                    overflow: "auto",
+                    display: "flex",
+                    flex: 1,
+                    overflowY: "auto",
                     overflowWrap: "break-word",
-                    height: "91dvh"
                 }}>
                     <MessageList />
                 </Box>
-                <Box>
+                <Box sx={{
+                    overflowY: "auto"
+                }}>
                     <MessageForm {...channel} />
                 </Box>
             </Box>
