@@ -1,3 +1,4 @@
+import { Attachment } from "./attachment.interface";
 import { UserPartial } from "./user.interface";
 
 export interface Message {
@@ -5,6 +6,6 @@ export interface Message {
     sender: UserPartial,
     reply_id?: string,
     content: string,
-    attachments: string[],
+    attachments: Attachment[],
     timestamp: string,
 }

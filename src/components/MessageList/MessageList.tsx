@@ -34,13 +34,7 @@ export default function MessageList() {
         if (socket) {
             socket.on("chat_received", (data) => {
                 // Mapping the received data to the Message interface
-                const newMessage: Message = {
-                    _id: "",
-                    sender: data.userId, // Adjust as needed based on your application's logic
-                    content: data.content,
-                    attachments: [],
-                    timestamp: data.timestamp,
-                };
+                const newMessage: Message = data;
                 console.log(newMessage);
                 // Append the new message to the messages array
                 setMessages([...messages, newMessage]);

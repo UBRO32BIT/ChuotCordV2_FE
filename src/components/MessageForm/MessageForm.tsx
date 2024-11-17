@@ -4,6 +4,7 @@ import React, { ChangeEvent } from "react";
 import { useSocket } from "../../context/SocketProvider";
 import { Channel } from "../../shared/guild.interface";
 import { Cancel01Icon } from "hugeicons-react";
+import { AddMessage } from "../../services/message.service";
 
 export default function MessageForm(channel: Channel) {
     const [fileList, setFileList] = React.useState<File[]>([]);
@@ -23,34 +24,45 @@ export default function MessageForm(channel: Channel) {
         // Remove the image from previewUrlList
         const updatedPreviewUrlList = previewUrlList.filter((_, i) => i !== index);
         setPreviewUrlList(updatedPreviewUrlList);
-      
+
         if (fileList) {
-          // Convert FileList to an array
-          const fileArray = Array.from(fileList);
-      
-          // Remove the file at the specified index
-          const updatedFileArray = fileArray.filter((_, i) => i !== index);
-      
-          // Update fileList state with the new FileList
-          setFileList(updatedFileArray);
+            // Convert FileList to an array
+            const fileArray = Array.from(fileList);
+
+            // Remove the file at the specified index
+            const updatedFileArray = fileArray.filter((_, i) => i !== index);
+
+            // Update fileList state with the new FileList
+            setFileList(updatedFileArray);
         }
-      };
-    const onChatSubmit = (event: any) => {
+    };
+    const onChatSubmit = async (event: any) => {
         try {
             event.preventDefault();
-            const message = event.target.message.value.trim();
-            if (message !== '') {
-                socket.emit("chat", {
-                    channelId: channel._id,
-                    message: event.target.message.value,
-                })
+            const messageContent = event.target.message.value.trim();
+            if (messageContent === '' && fileList.length === 0) return;
+
+            const formData = new FormData();
+            formData.append("channelId", channel._id);
+            formData.append("message", messageContent);
+
+            // Append files to formData
+            fileList.forEach((file) => {
+                formData.append("files", file);
+            });
+
+            // Send message and files to the server
+            const response = await AddMessage('abc', channel._id, formData);
+
+            if (response) {
                 setMessage('');
+                setFileList([]);
+                setPreviewUrlList([]);
             }
+        } catch (error) {
+            console.error("Error uploading message and files:", error);
         }
-        catch (error) {
-            console.error(error);
-        }
-    }
+    };
 
     React.useEffect(() => {
         if (!fileList) {
@@ -70,29 +82,29 @@ export default function MessageForm(channel: Channel) {
     }}>
         {/* Image append */}
         {previewUrlList && (
-        <Box sx={{ display: "flex", alignItems: "start", flexWrap: "wrap" }}>
-            {previewUrlList.map((previewUrl, index) => (
-            <Box
-                key={index}
-                sx={{ position: "relative", margin: 1 }} // Add margin for spacing between images
-            >
-                <Box sx={{ display: "inline-block", width: "25%" }}>
-                <img src={previewUrl} alt={`Preview ${index}`} style={{ width: "100%" }} />
-                </Box>
-                <IconButton
-                onClick={() => removeImage(index)} // Pass the index to the removeImage function
-                sx={{
-                    position: "absolute",
-                    right: 0,
-                    top: 0,
-                    backgroundColor: "rgba(255,255,255,0.7)"
-                }}
-                >
-                <Cancel01Icon />
-                </IconButton>
+            <Box sx={{ display: "flex", alignItems: "start", flexWrap: "wrap" }}>
+                {previewUrlList.map((previewUrl, index) => (
+                    <Box
+                        key={index}
+                        sx={{ position: "relative", margin: 1 }} // Add margin for spacing between images
+                    >
+                        <Box sx={{ display: "inline-block", width: "25%" }}>
+                            <img src={previewUrl} alt={`Preview ${index}`} style={{ width: "100%" }} />
+                        </Box>
+                        <IconButton
+                            onClick={() => removeImage(index)} // Pass the index to the removeImage function
+                            sx={{
+                                position: "absolute",
+                                right: 0,
+                                top: 0,
+                                backgroundColor: "rgba(255,255,255,0.7)"
+                            }}
+                        >
+                            <Cancel01Icon />
+                        </IconButton>
+                    </Box>
+                ))}
             </Box>
-            ))}
-        </Box>
         )}
         <form onSubmit={onChatSubmit}>
             <Box sx={{
@@ -110,7 +122,7 @@ export default function MessageForm(channel: Channel) {
                         width: "90%",
                     }}
                 />
-                <input type="file" id="file-input" onChange={onFileChange} multiple/>
+                <input type="file" id="file-input" onChange={onFileChange} multiple />
             </Box>
         </form>
     </Box>
