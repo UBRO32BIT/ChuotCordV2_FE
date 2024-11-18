@@ -54,12 +54,11 @@ export default function MessageForm(channel: Channel) {
             // Send message and files to the server
             const response = await AddMessage('abc', channel._id, formData);
 
-            if (response) {
-                setMessage('');
-                setFileList([]);
-                setPreviewUrlList([]);
-            }
-        } catch (error) {
+            setMessage('');
+            setFileList([]);
+            setPreviewUrlList([]);
+        } 
+        catch (error) {
             console.error("Error uploading message and files:", error);
         }
     };

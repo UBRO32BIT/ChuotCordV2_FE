@@ -17,6 +17,7 @@
     "@types/node": "^16.18.96",
     "@types/react": "^18.2.75",
     "@types/react-dom": "^18.2.24",
+    "animejs": "^3.2.2",
     "axios": "^1.6.8",
     "hugeicons-react": "^0.3.0",
     "immer": "^10.1.1",
@@ -31,6 +32,8 @@
     "react-router-dom": "^6.22.3",
     "react-scripts": "5.0.1",
     "redux-persist": "^6.0.0",
+    "sass": "^1.81.0",
+    "scrollreveal": "^4.0.9",
     "socket.io-client": "^4.7.5",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4",
@@ -59,5 +62,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/animejs": "^3.1.12",
+    "@types/scrollreveal": "^0.0.11"
   }
 }
