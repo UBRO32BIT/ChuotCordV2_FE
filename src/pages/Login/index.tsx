@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Avatar, Button, Checkbox, FormControlLabel, Grid, Link, Paper, TextField, Typography } from "@mui/material"
+import { Avatar, Box, Button, Checkbox, FormControl, FormControlLabel, FormLabel, Grid, Link, Paper, TextField, Typography } from "@mui/material"
 import { useSnackbar } from "notistack";
 import * as yup from "yup";
 import { useForm } from 'react-hook-form';
@@ -43,12 +43,12 @@ export default function Login() {
     const onLoginSubmit = async (event: any) => {
         try {
             setUploading(true);
-            const data : LoginData = {
+            const data: LoginData = {
                 username: event.username,
                 password: event.password,
             }
             const result = await LoginWithCredentials(data);
-            const userData : User = {
+            const userData: User = {
                 _id: result.user._id,
                 username: result.user.username,
                 email: result.user.email,
@@ -85,67 +85,108 @@ export default function Login() {
             else setErrorResponse(error);
         }
     }
-    const paperStyle = { padding: 20, height: '55vh', width: 280, margin: "20px auto" }
-    const avatarStyle = { backgroundColor: '#1bbd7e' }
-    const btnstyle = { margin: '8px 0' }
 
     React.useEffect(() => {
         console.log(user);
     }, [user])
 
     return (
-        <Grid sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignContent: 'center',
-            backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(https://upload.wikimedia.org/wikipedia/commons/c/c1/Rat_agouti.jpg)',
-            backgroundSize: 'cover',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            height: '100dvh'
-        }}>
-            <Paper elevation={10} style={paperStyle}>
-                <Grid alignItems='center' justifyContent={'center'}>
-                    {/* <Avatar style={avatarStyle}><LockOutlinedIcon /></Avatar> */}
-                    <Typography variant="h2" gutterBottom>Login</Typography>
-                    <Typography variant="body2" color={'red'}>{errorResponse}</Typography>
+        <Grid
+            container
+            sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'flex-start',
+                backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(https://upload.wikimedia.org/wikipedia/commons/c/c1/Rat_agouti.jpg)',
+                backgroundSize: 'cover',
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                minHeight: '100vh',
+                overflow: 'auto', // Allow scrolling if content overflows
+                padding: 2,
+            }}
+        >
+            <Paper
+                elevation={10}
+                style={{
+                    padding: 20,
+                    width: 350,
+                    margin: '20px auto',
+                    maxHeight: '90vh', // Ensure it does not overflow the viewport
+                    overflowY: 'auto' // Allow scrolling within the Paper
+                }}
+            >
+                <Grid alignItems='center' justifyContent='center'>
+                <Typography
+                    component="h1"
+                    variant="h4"
+                    sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
+                >
+                    Sign in
+                </Typography>
+                    <Typography variant="body2" color={'red'}>
+                        {errorResponse}
+                    </Typography>
                 </Grid>
-                <form onSubmit={handleLoginSubmit(onLoginSubmit)}>
-                    <TextField
-                        margin="normal"
+                <Box 
+                    component="form" 
+                    onSubmit={handleLoginSubmit(onLoginSubmit)}
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        textAlign: "start",
+                        width: '100%',
+                        gap: 2,
+                      }}
+                >
+                    <FormControl>
+                        <FormLabel htmlFor="username">Username</FormLabel>
+                        <TextField
+                            fullWidth
+                            id="username"
+                            autoComplete="email"
+                            autoFocus
+                            required
+                            variant="outlined"
+                            error={!!loginErrors.username}
+                            helperText={loginErrors.username?.message}
+                            color={loginErrors.username ? 'error' : 'primary'}
+                            {...registerLogin("username")}
+                        />
+                    </FormControl>
+                    <FormControl>
+                        <FormLabel htmlFor="password">Password</FormLabel>
+                        <TextField
+                            fullWidth
+                            type="password"
+                            id="password"
+                            autoFocus
+                            required
+                            variant="outlined"
+                            autoComplete="current-password"
+                            error={!!loginErrors.password}
+                            helperText={loginErrors.password?.message}
+                            {...registerLogin("password")}
+                        />
+                    </FormControl>
+                    
+                    <Button
+                        type='submit'
+                        color='primary'
+                        variant="contained"
+                        style={{ margin: '8px 0' }}
                         fullWidth
-                        id="username"
-                        label="Username"
-                        autoComplete="email"
-                        autoFocus
-                        error={!!loginErrors.username}
-                        helperText={loginErrors.username?.message}
-                        {...registerLogin("username")}
-                    />
-                    <TextField
-                        margin="normal"
-                        fullWidth
-                        label="Password"
-                        type="password"
-                        id="password"
-                        autoComplete="current-password"
-                        error={!!loginErrors.password}
-                        helperText={loginErrors.password?.message}
-                        {...registerLogin("password")}
-                    />
-                    <Button 
-                        type='submit' 
-                        color='primary' 
-                        variant="contained" 
-                        style={btnstyle} 
-                        fullWidth
-                    >Sign in</Button>
-                </form>
-                <Typography >
+                    >
+                        Sign in
+                    </Button>
+                </Box>
+                <Typography>
                     <Link href="#" variant="body2">
                         Forgot password?
                     </Link>
                 </Typography>
-                <Typography variant="body2"> Do you have an account?</Typography>
+                <Typography variant="body2">
+                    Do you have an account?
+                </Typography>
                 <Link href="#" variant="body2">
                     Register now
                 </Link>

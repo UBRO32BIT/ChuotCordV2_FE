@@ -8,59 +8,59 @@ html {
 	box-sizing: inherit;
 }
 
-body {
+.home-page {
 	background: color(bg, 2); /* Fallback for when there is no custom background color defined. */
 	-moz-osx-font-smoothing: grayscale;
 	-webkit-font-smoothing: antialiased;
+	
+	hr {
+		border: 0;
+		@include divider();
+		margin-top: 24px;
+		margin-bottom: 24px;
+	}
 }
 
-hr {
-	border: 0;
-	@include divider();
-	margin-top: 24px;
-	margin-bottom: 24px;
-}
-
-ul, ol {
+.home-page ul, ol {
 	margin-top: 0;
 	margin-bottom: 24px;
 	padding-left: 24px;
 }
 
-ul {
+.home-page > ul {
 	list-style: disc;
 }
 
-ol {
+.home-page > ol {
 	list-style: decimal;
 }
 
-li > ul,
-li > ol {
+.home-page > li > ul,
+.home-page > li > ol {
 	margin-bottom: 0;
 }
 
-dl {
+.home-page > dl {
 	margin-top: 0;
 	margin-bottom: 24px;
 }
 
-dt {
+.home-page > dt {
 	@include font-weight(semibold);
 }
 
-dd {
+.home-page > dd {
 	margin-left: 24px;
 	margin-bottom: 24px;
 }
 
-img {
+.home-page > img {
 	height: auto; /* Make sure images are scaled correctly. */
 	max-width: 100%; /* Adhere to container width. */
 	vertical-align: middle;
 }
 
-figure {
+.home-page > figure {
 	margin: 24px 0; /* Extra wide images within figure tags don't overflow the content area. */
 }
 
@@ -69,27 +69,27 @@ figcaption {
 	padding: 8px 0;
 }
 
-img,
+.home-page > img,
 svg {
 	display: block;
 }
 
 // tables
-table {
+.home-page > table {
 	border-collapse: collapse;
 	margin-bottom: 24px;
 	width: 100%;
 }
 
-tr {
+.home-page > tr {
 	border-bottom: 1px solid color(bg, 3);
 }
 
-th {
+.home-page > th {
 	text-align: left;
 }
 
-th,
+.home-page > th,
 td {
 	padding: 10px 16px;
 
