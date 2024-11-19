@@ -16,7 +16,7 @@ export default function MessageComponent(message: Message) {
                         key={attachment._id}
                         sx={{
                             display: 'flex',
-                            justifyContent: 'center',
+                            justifyContent: 'flex-start', // Align to the start
                             mt: 1,
                         }}
                     >
@@ -24,7 +24,10 @@ export default function MessageComponent(message: Message) {
                             src={attachment.fullUrl}
                             crossOrigin="anonymous"
                             alt="attachment"
-                            style={{ maxWidth: '200px', maxHeight: '200px', borderRadius: '8px' }}
+                            style={{
+                                maxWidth: '50%', // Dynamic width relative to the parent
+                                borderRadius: '8px',
+                            }}
                         />
                     </Box>
                 );
@@ -34,14 +37,17 @@ export default function MessageComponent(message: Message) {
                         key={attachment._id}
                         sx={{
                             display: 'flex',
-                            justifyContent: 'center',
+                            justifyContent: 'flex-start', // Align to the start
                             mt: 1,
                         }}
                     >
                         <video
                             controls
                             crossOrigin="anonymous"
-                            style={{ maxWidth: '200px', maxHeight: '200px', borderRadius: '8px' }}
+                            style={{
+                                maxWidth: '50%', // Dynamic width relative to the parent
+                                borderRadius: '8px',
+                            }}
                         >
                             <source src={attachment.fullUrl} type="video/mp4" />
                             Your browser does not support the video tag.
@@ -51,13 +57,23 @@ export default function MessageComponent(message: Message) {
             default:
                 // Handle other types (e.g., files)
                 return (
-                    <Box key={attachment._id} sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+                    <Box
+                        key={attachment._id}
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            mt: 1,
+                        }}
+                    >
                         <InsertDriveFileIcon color="action" sx={{ mr: 1 }} />
                         <a
                             href={attachment.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            style={{ textDecoration: 'none', color: 'blue' }}
+                            style={{
+                                textDecoration: 'none',
+                                color: 'blue',
+                            }}
                         >
                             {attachment.fullUrl.split('/').pop()}
                         </a>
@@ -65,6 +81,7 @@ export default function MessageComponent(message: Message) {
                 );
         }
     };
+    
 
     return (
         <Box

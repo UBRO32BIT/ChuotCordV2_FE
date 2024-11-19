@@ -8,52 +8,33 @@ import GuildAddition from "../../components/GuildAddition/GuildAddition";
 
 export default function Chat() {
     return (
-        <Grid container>
-            <Grid item md={2}>
-                <Box sx={{ 
-                    borderRight: '1px solid grey', 
-                    height: '100vh',
+        <Grid container sx={{ height: '100vh' }}>
+            <Grid item md={2} sx={{ display: 'flex', flexDirection: 'column', height: '100vh', borderRight: '1px solid grey' }}>
+                <Box sx={{
                     display: "flex",
                     flexDirection: "column",
-                    overflow: "hidden",
-                    }}>
-                    <Box sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        overflowY: "auto",
-                        height: "7dvh",
-                    }}>
-                        <UserMiniCard/>
+                    flex: 1,
+                    overflowY: "auto", 
+                }}>
+                    <Box sx={{ flex: '0 1 auto' }}>
+                        <UserMiniCard />
                     </Box>
                     <Divider variant="middle" />
-                    <Box sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        overflowY: "auto",
-                        height: "80dvh",
-                        overflowX: "hidden"
-                    }}>
-                        <GuildList/>
+                    <Box sx={{ flex: '1 1 auto', overflowY: "auto", overflowX: "hidden" }}>
+                        <GuildList />
                     </Box>
-                    <Box sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        overflowY: "auto",
-                        height: "13dvh",
-                    }}>
-                        <Divider/>
-                        <GuildAddition/>
+                    <Box sx={{ flex: '0 1 auto' }}>
+                        <Divider />
+                        <GuildAddition />
                     </Box>
                 </Box>
             </Grid>
             <Grid item md={10}>
                 <Routes>
-                    <Route>
-                        <Route path="/" element={<ChatOverview/>}/>
-                        <Route path="/:guildId/*" element={<GuildDetails/>} />
-                    </Route>
-              </Routes>
+                    <Route path="/" element={<ChatOverview />} />
+                    <Route path="/:guildId/*" element={<GuildDetails />} />
+                </Routes>
             </Grid>
         </Grid>
-    )
+    );
 }

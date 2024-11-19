@@ -9,5 +9,9 @@ export default function MemberTyping() {
     const userDoneTyping = () => {
         
     }
-    return <Box></Box>
+    return <Box sx={{
+        textAlign: "start",
+    }}>
+        ubro3 is typing
+    </Box>
 }

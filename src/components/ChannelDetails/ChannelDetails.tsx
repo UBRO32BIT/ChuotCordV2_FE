@@ -18,7 +18,7 @@ export default function ChannelDetails() {
     const { enqueueSnackbar } = useSnackbar();
     const navigate = useNavigate();
     const [channel, setChannel] = React.useState<Channel>();
-    
+
     const fetchChannelDetails = async (guildId: string, channelId: string) => {
         try {
             const result = await getChannelById(guildId, channelId);
@@ -26,70 +26,85 @@ export default function ChannelDetails() {
                 setChannel(result);
             }
             else throw Error("Channel data not found");
-        }
-        catch (error: any) {
+        } catch (error: any) {
             enqueueSnackbar(`${error.message}`, { variant: "error" });
             navigate("/chat");
         }
-    }
+    };
 
     const joinChannelSocket = () => {
         socket.emit('user_connect_channel', {
             channelId: channelId,
-        })
-    }
-    
+        });
+    };
+
     React.useEffect(() => {
         if (guildId && channelId) {
             fetchChannelDetails(guildId, channelId);
         }
         joinChannelSocket();
-    }, [channelId])
-    return <>
-        {channel && (
-            <Box sx={{
-                height: '100vh',
-                display: "flex",
-                flexDirection: "column",
-                overflow: "hidden",
-            }}>
+    }, [channelId]);
+
+    return (
+        <>
+            {channel && (
                 <Box
                     sx={{
+                        height: '100vh', // Full height of the viewport
                         display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        gap: 1,
-                    }}>
-                    <Box sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 1,
-                        p: 1
-                    }}>
-                        <TagIcon />
-                        <Typography>{channel?.name}</Typography>
+                        flexDirection: "column",
+                        overflow: "hidden",
+                    }}
+                >
+                    {/* Header Section */}
+                    <Box
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            gap: 1,
+                            p: 1,
+                            flexShrink: 0, // Prevent shrinking
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 1,
+                            }}
+                        >
+                            <TagIcon />
+                            <Typography>{channel?.name}</Typography>
+                        </Box>
+                        <Box sx={{ px: 2 }}>
+                            <MenuIcon />
+                        </Box>
                     </Box>
-                    <Box sx={{
-                        px: 2
-                    }}>
-                        <MenuIcon/>
+                    <Divider variant="middle" />
+
+                    {/* Message List Section */}
+                    <Box
+                        sx={{
+                            flex: 1, // Take up the remaining space
+                            overflowY: "auto", // Enable scrolling for the message list
+                            overflowWrap: "break-word",
+                        }}
+                    >
+                        <MessageList />
+                    </Box>
+
+                    {/* Footer Section */}
+                    <Box
+                        sx={{
+                            flexShrink: 0, // Prevent shrinking
+                            borderTop: "1px solid rgba(0, 0, 0, 0.12)", // Optional styling
+                        }}
+                    >
+                        <MessageForm {...channel} />
                     </Box>
                 </Box>
-                <Divider variant="middle" />
-                <Box sx={{
-                    display: "flex",
-                    flex: 1,
-                    overflowY: "auto",
-                    overflowWrap: "break-word",
-                }}>
-                    <MessageList />
-                </Box>
-                <Box sx={{
-                    overflowY: "auto"
-                }}>
-                    <MessageForm {...channel} />
-                </Box>
-            </Box>
-        )}
-    </>
+            )}
+        </>
+    );
 }

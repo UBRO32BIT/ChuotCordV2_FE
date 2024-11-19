@@ -5,6 +5,7 @@ import { useSocket } from "../../context/SocketProvider";
 import { Channel } from "../../shared/guild.interface";
 import { Cancel01Icon } from "hugeicons-react";
 import { AddMessage } from "../../services/message.service";
+import MemberTyping from "../MemberTyping/MemberTyping";
 
 export default function MessageForm(channel: Channel) {
     const [fileList, setFileList] = React.useState<File[]>([]);
@@ -124,5 +125,8 @@ export default function MessageForm(channel: Channel) {
                 <input type="file" id="file-input" onChange={onFileChange} multiple />
             </Box>
         </form>
+        <Box>
+            <MemberTyping/>
+        </Box>
     </Box>
 }
