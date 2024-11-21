@@ -7,14 +7,33 @@ import { Cancel01Icon } from "hugeicons-react";
 import { AddMessage } from "../../services/message.service";
 import MemberTyping from "../MemberTyping/MemberTyping";
 
+// Utility function to debounce events
+const debounce = (func: (...args: any[]) => void, delay: number) => {
+    let timer: NodeJS.Timeout;
+    return (...args: any[]) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            func(...args);
+        }, delay);
+    };
+};
+
 export default function MessageForm(channel: Channel) {
     const [fileList, setFileList] = React.useState<File[]>([]);
     const [previewUrlList, setPreviewUrlList] = React.useState<string[]>([]);
     const [message, setMessage] = React.useState<string>('');
     const socket = useSocket();
 
+    const emitTypingEvent = React.useCallback(
+        debounce(() => {
+            socket.emit("user_typing", { channelId: channel._id });
+        }, 300),
+        [channel._id, socket]
+    );
+
     const onMessageChange = (event: any) => {
         setMessage(event.target.value)
+        emitTypingEvent();
     }
     const onFileChange = (event: ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
