@@ -3,12 +3,17 @@ import ScrollReveal from 'scrollreveal';
 import anime from 'animejs';
 import '../../styles/home/style.scss'
 import logo from "../../assets/home/logo.svg"
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export default function Home() {
+    const isAuthenticated = useSelector((state: any) => state.user.isAuthenticated);
     const navigate = useNavigate();
-    const handleLogin = () => {
+    const handleLoginNavigation = () => {
         navigate('/login');
+    }
+    const handleChatNavigation = () => {
+        navigate('/chat');
     }
 
     React.useEffect(() => {
@@ -87,7 +92,11 @@ export default function Home() {
                                 <div>About us</div>
                                 <div>Help</div>
                             </div>
-                            <button className="login-button" onClick={handleLogin}>Login</button>
+                            {isAuthenticated ? (
+                                <button className="login-button" onClick={handleChatNavigation}>Chat now</button>
+                            ) : (
+                                <button className="login-button" onClick={handleLoginNavigation}>Login</button>
+                            )}
                         </div>
                     </div>
                 </header>
@@ -99,7 +108,16 @@ export default function Home() {
                                 <div className="hero-copy">
                                     <h1 className="hero-title mt-0">Join and chat with friends</h1>
                                     <p className="hero-paragraph">Made by a tech enthusiasm, the platform is kind of trash but mf'ing cool so join asap</p>
-                                    <div className="hero-cta"><a className="button button-primary" href="#">Register now</a><a className="button" href="#">Login</a></div>
+                                    {isAuthenticated ? (
+                                        <div className="hero-cta">
+                                            <Link className="button button-primary" to="/chat">Go to chat</Link>
+                                        </div>
+                                    ) : (
+                                        <div className="hero-cta">
+                                            <Link className="button button-primary" to="/register">Register now</Link>
+                                            <Link className="button" to="/login">Login</Link>
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="hero-figure anime-element">
                                     <svg className="placeholder" width="528" height="396" viewBox="0 0 528 396">

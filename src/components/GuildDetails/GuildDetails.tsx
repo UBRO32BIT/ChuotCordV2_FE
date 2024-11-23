@@ -53,27 +53,17 @@ export default function GuildDetails() {
     }
   }
   const joinGuildSocket = () => {
-    socket.emit('user_connect_guild', {
+    if (guildId) {
+      socket.emit('user_connect_guild', {
         guildId: guildId,
-    })
+      })
+    }
     // Clean up the event listener on component unmount
     // return () => {
     //     socket.off("chat");
     // };
   }
-  const fetchSocketStatus = () => {
-      if (!socket.connected) {
-          enqueueSnackbar(`You are disconnected`, { variant: "error", persist: true, preventDuplicate: true, action });
-      }
-  }
-
-  React.useEffect(() => {
-    // Set up the interval to run every second (1000 milliseconds)
-    const intervalId = setInterval(fetchSocketStatus, 1000);
-
-    // Clean up the interval on component unmount
-    return () => clearInterval(intervalId);
-}, []); // Empty dependency array ensures this runs once on mount
+  
   React.useEffect(() => {
     if (guildId) {
       fetchGuildDetails(guildId);

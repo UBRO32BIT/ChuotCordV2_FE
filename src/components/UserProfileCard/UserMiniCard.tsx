@@ -1,7 +1,7 @@
 import Avatar from "@mui/material/Avatar"
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import SettingsIcon from '@mui/icons-material/Settings';
 import React from "react";
 import IconButton from "@mui/material/IconButton";
@@ -11,10 +11,14 @@ import { ListItemIcon, ListItemText } from "@mui/material";
 import PersonIcon from '@mui/icons-material/Person';
 import InsertLinkIcon from '@mui/icons-material/InsertLink';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { useNavigate } from "react-router-dom";
+import { logoutUser } from "../../redux/slices/userSlice";
 
 export const UserMiniCard = () => {
     const user = useSelector((state: any) => state.user.user);
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const open = Boolean(anchorEl);
 
     const handleSettingClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -22,6 +26,10 @@ export const UserMiniCard = () => {
     };
     const handleClose = () => {
         setAnchorEl(null);
+    };
+    const handleLogout = () => {
+        dispatch(logoutUser()); 
+        navigate("/");
     };
     return <Box>
         <Box sx={{
@@ -68,7 +76,7 @@ export const UserMiniCard = () => {
                         <ListItemIcon><InsertLinkIcon/></ListItemIcon>
                         <ListItemText>My invites</ListItemText>
                     </MenuItem>
-                    <MenuItem onClick={handleClose}>
+                    <MenuItem onClick={handleLogout}>
                         <ListItemIcon><LogoutIcon/></ListItemIcon>
                         <ListItemText>Logout</ListItemText>
                     </MenuItem>

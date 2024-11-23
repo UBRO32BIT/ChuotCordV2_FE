@@ -6,10 +6,10 @@ import reportWebVitals from './reportWebVitals';
 import { Provider } from 'react-redux';
 import {store, persistor} from './store';
 import { BrowserRouter } from 'react-router-dom';
-import { injectStore } from './services/apiService';
 import { PersistGate } from 'redux-persist/integration/react';
+import { setupAxiosInterceptors } from './services/apiService';
 
-injectStore(store)
+setupAxiosInterceptors(store.dispatch);
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
