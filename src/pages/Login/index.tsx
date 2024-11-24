@@ -52,6 +52,7 @@ export default function Login() {
                 phoneNumber: result.user.phone_number,
                 profilePicture: result.user.profilePicture,
                 isEmailVerified: result.user.is_email_verified,
+                onlinePresence: result.user.onlinePresence,
             };
 
             dispatch(loadUser(userData));

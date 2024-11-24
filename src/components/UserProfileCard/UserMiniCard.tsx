@@ -13,6 +13,7 @@ import InsertLinkIcon from '@mui/icons-material/InsertLink';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useNavigate } from "react-router-dom";
 import { logoutUser } from "../../redux/slices/userSlice";
+import { OnlinePresence } from "../OnlinePresences/OnlinePresence";
 
 export const UserMiniCard = () => {
     const user = useSelector((state: any) => state.user.user);
@@ -28,7 +29,7 @@ export const UserMiniCard = () => {
         setAnchorEl(null);
     };
     const handleLogout = () => {
-        dispatch(logoutUser()); 
+        dispatch(logoutUser());
         navigate("/");
     };
     return <Box>
@@ -37,17 +38,22 @@ export const UserMiniCard = () => {
             justifyContent: "space-between",
             alignItems: "center",
         }}>
-            <Box sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: 1,
-                p: 1
-            }}>
-                <Avatar
-                    src={user.profilePicture}
-                    alt={user.username}
-                    sx={{ width: 36, height: 36 }}
-                />
+            <Box
+                sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                    p: 1,
+                }}
+            >
+                <Box sx={{ position: "relative", width: 36, height: 36 }}>
+                    <Avatar
+                        src={user.profilePicture}
+                        alt={user.username}
+                        sx={{ width: 36, height: 36 }}
+                    />
+                    <OnlinePresence onlinePresence={user.onlinePresence}/>
+                </Box>
                 <Typography>{user.username}</Typography>
             </Box>
             <Box sx={{
@@ -69,15 +75,15 @@ export const UserMiniCard = () => {
                     }}
                 >
                     <MenuItem onClick={handleClose}>
-                        <ListItemIcon><PersonIcon/></ListItemIcon>
+                        <ListItemIcon><PersonIcon /></ListItemIcon>
                         <ListItemText>Profile</ListItemText>
                     </MenuItem>
                     <MenuItem onClick={handleClose}>
-                        <ListItemIcon><InsertLinkIcon/></ListItemIcon>
+                        <ListItemIcon><InsertLinkIcon /></ListItemIcon>
                         <ListItemText>My invites</ListItemText>
                     </MenuItem>
                     <MenuItem onClick={handleLogout}>
-                        <ListItemIcon><LogoutIcon/></ListItemIcon>
+                        <ListItemIcon><LogoutIcon /></ListItemIcon>
                         <ListItemText>Logout</ListItemText>
                     </MenuItem>
                 </Menu>

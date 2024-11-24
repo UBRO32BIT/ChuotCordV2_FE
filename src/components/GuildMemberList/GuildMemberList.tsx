@@ -4,6 +4,7 @@ import Typography from "@mui/material/Typography";
 import Avatar from "@mui/material/Avatar";
 import React from "react";
 import { useSocket } from "../../context/SocketProvider";
+import { OnlinePresence } from "../OnlinePresences/OnlinePresence";
 
 interface GuildInfoProps {
     guild: Guild;
@@ -62,11 +63,14 @@ export default function GuildMemberList({guild, updateGuild}: GuildInfoProps) {
                 gap: 1,
                 p: 1
             }}>
-                <Avatar 
-                    src={member.memberId.profilePicture} 
-                    alt={member.memberId.username}
-                    sx={{ width: 36, height: 36}}
-                />
+                <Box sx={{ position: "relative", width: 36, height: 36 }}>
+                    <Avatar
+                        src={member.memberId.profilePicture}
+                        alt={member.memberId.username}
+                        sx={{ width: 36, height: 36 }}
+                    />
+                    {member.memberId.onlinePresence && <OnlinePresence onlinePresence={member.memberId.onlinePresence}/>}
+                </Box>
                 <Typography>{member.memberId.username}</Typography>
             </Box>
         ))}
