@@ -27,7 +27,7 @@ import { DeleteGuild } from "../../services/guild.service";
 import { removeGuild } from "../../redux/slices/guildsSlice";
 import { useNavigate } from "react-router-dom";
 import { Avatar, Chip, Divider, TextField } from "@mui/material";
-import { GetInvitesByGuildId } from "../../services/invite.service";
+import { GenerateInvite, GetInvitesByGuildId } from "../../services/invite.service";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
@@ -97,6 +97,18 @@ export default function GuildSettingsDropdown({guild, updateGuild}: GuildInfoPro
         }
         catch (error) {
 
+        }
+    }
+
+    const onCreateInvite = async () => {
+        try {
+            const result = await GenerateInvite(guild._id);
+            setInvites((prevInvites) => [...prevInvites, result]);
+            enqueueSnackbar('Invite created successfully!', { variant: 'success' });
+        }
+        catch (error: any) {
+            console.error(error);
+            enqueueSnackbar(`${error.message}`, { variant: "error" });
         }
     }
     const disbandGuild = async () => {
@@ -219,7 +231,7 @@ export default function GuildSettingsDropdown({guild, updateGuild}: GuildInfoPro
                         sx={{
                             gap: 1,
                         }}>
-                        <Typography variant="button">Generate new Invite</Typography>
+                        <Typography variant="button" onClick={onCreateInvite}>Generate new Invite</Typography>
                     </Button>
                 </Box>
                 <Divider />

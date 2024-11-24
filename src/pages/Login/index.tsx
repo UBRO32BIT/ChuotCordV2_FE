@@ -64,7 +64,8 @@ export default function Login() {
             setValue("password", "");
             if (error && error.message) {
                 setErrorResponse(error.message);
-            } else setErrorResponse(error);
+            } 
+            else setErrorResponse(error);
         }
     };
 
