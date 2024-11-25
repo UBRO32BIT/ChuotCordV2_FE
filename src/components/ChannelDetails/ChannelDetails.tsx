@@ -33,9 +33,11 @@ export default function ChannelDetails() {
     };
 
     const joinChannelSocket = () => {
-        socket.emit('user_connect_channel', {
-            channelId: channelId,
-        });
+        if (channelId) {
+            socket.emit('user_connect_channel', {
+                channelId: channelId,
+            });
+        }
     };
 
     React.useEffect(() => {

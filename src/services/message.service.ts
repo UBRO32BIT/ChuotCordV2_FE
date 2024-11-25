@@ -1,15 +1,15 @@
 import axiosClient from "./apiService";
 
-const GetMessageByChannelId = async (guildId: string, channelId: string) => {
-    return axiosClient.get(`/guilds/${guildId}/channels/${channelId}/messages`)
-        .then((res) => {
-            return res.data.data;
-        })
+const GetMessageByChannelId = async (guildId: string, channelId: string, before?: string) => {
+    const params = before ? { before } : {};
+    return axiosClient
+        .get(`/guilds/${guildId}/channels/${channelId}/messages`, { params })
+        .then((res) => res.data.data)
         .catch((error) => {
             console.error(error);
-            throw Error(error.response.data.message)
-        })
-}
+            throw new Error(error.response?.data?.message || "Failed to fetch messages");
+        });
+};
 
 const AddMessage = async (guildId: string, channelId: string, payload: FormData) => {
     return axiosClient.post(`/guilds/${guildId}/channels/${channelId}/messages`, payload, {

@@ -51,6 +51,7 @@ export default function MemberTyping() {
       };
     return <Box sx={{
         textAlign: "start",
+        pb: 0.5,
     }}>
         {typingMessage() && <div>{typingMessage()}</div>}
     </Box>

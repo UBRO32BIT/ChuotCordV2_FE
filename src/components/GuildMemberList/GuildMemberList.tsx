@@ -23,7 +23,6 @@ export default function GuildMemberList({guild, updateGuild}: GuildInfoProps) {
     React.useEffect(() => {
         if (socket) {
             socket.on("online_members", (data) => {
-                console.log(data);
                 if (members && data) {
                     const onlineMemberSet = new Set(data);
                     const filteredOnlineMembers = members.filter(member => {
@@ -51,7 +50,7 @@ export default function GuildMemberList({guild, updateGuild}: GuildInfoProps) {
                 }
             });
         }
-    }, [socket, members])
+    }, [socket, members, guild])
     return <Box>
         <Typography variant="button" fontWeight="bold" sx={{mx: 1}}>Online - {onlineMembers && onlineMembers.length}</Typography>
         {onlineMembers && onlineMembers.map && onlineMembers.map((member) => (

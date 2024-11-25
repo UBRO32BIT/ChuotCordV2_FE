@@ -5,6 +5,7 @@ import { useSocket } from "../../context/SocketProvider";
 import { Channel } from "../../shared/guild.interface";
 import { Cancel01Icon } from "hugeicons-react";
 import { AddMessage } from "../../services/message.service";
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import MemberTyping from "../MemberTyping/MemberTyping";
 
 // Utility function to debounce events
@@ -77,7 +78,7 @@ export default function MessageForm(channel: Channel) {
             setMessage('');
             setFileList([]);
             setPreviewUrlList([]);
-        } 
+        }
         catch (error) {
             console.error("Error uploading message and files:", error);
         }
@@ -94,7 +95,6 @@ export default function MessageForm(channel: Channel) {
     }, [fileList]);
 
     return <Box sx={{
-        width: "100%",
         display: "flex",
         flexDirection: "column",
         px: 3,
@@ -128,24 +128,32 @@ export default function MessageForm(channel: Channel) {
         <form onSubmit={onChatSubmit}>
             <Box sx={{
                 display: "flex",
-                alignContent: "center",
+                alignItems: "center", /* Align items vertically */
+                gap: 0.5,
             }}>
-                <input
-                    type="text"
+                <textarea
                     name="message"
                     value={message}
                     onChange={onMessageChange}
                     autoComplete="off"
                     placeholder="Type something..."
-                    style={{
-                        width: "90%",
+                    className="message-input-field"
+                    rows={1} /* Default row count */
+                    onInput={(e: any) => {
+                        e.target.style.height = "auto"; // Reset height to recalculate
+                        e.target.style.height = `${e.target.scrollHeight}px`; // Adjust height dynamically
                     }}
                 />
-                <input type="file" id="file-input" onChange={onFileChange} multiple />
+                <div className="file-upload-wrapper">
+                    <button className="file-input-field">
+                        <InsertDriveFileIcon />
+                    </button>
+                    <input type="file" id="file-input" onChange={onFileChange} multiple />
+                </div>
             </Box>
         </form>
         <Box>
-            <MemberTyping/>
+            <MemberTyping />
         </Box>
     </Box>
 }

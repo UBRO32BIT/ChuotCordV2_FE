@@ -1,3 +1,4 @@
+import '../../styles/chat/chat.scss'
 import React from "react";
 import { Box, Button, Divider, Grid, Typography } from "@mui/material";
 import { GuildList } from "../../components/GuildList";
