@@ -128,7 +128,7 @@ export default function MessageForm(channel: Channel) {
         <form onSubmit={onChatSubmit}>
             <Box sx={{
                 display: "flex",
-                alignItems: "center", /* Align items vertically */
+                alignItems: "center",
                 gap: 0.5,
             }}>
                 <textarea
@@ -138,10 +138,16 @@ export default function MessageForm(channel: Channel) {
                     autoComplete="off"
                     placeholder="Type something..."
                     className="message-input-field"
-                    rows={1} /* Default row count */
+                    rows={1}
                     onInput={(e: any) => {
                         e.target.style.height = "auto"; // Reset height to recalculate
                         e.target.style.height = `${e.target.scrollHeight}px`; // Adjust height dynamically
+                    }}
+                    onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                            e.preventDefault(); // Prevent default Enter behavior
+                            (e.target as HTMLTextAreaElement).form?.requestSubmit(); // Submit the form
+                        }
                     }}
                 />
                 <div className="file-upload-wrapper">
@@ -152,6 +158,7 @@ export default function MessageForm(channel: Channel) {
                 </div>
             </Box>
         </form>
+
         <Box>
             <MemberTyping />
         </Box>

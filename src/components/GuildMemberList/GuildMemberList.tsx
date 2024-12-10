@@ -5,6 +5,7 @@ import Avatar from "@mui/material/Avatar";
 import React from "react";
 import { useSocket } from "../../context/SocketProvider";
 import { OnlinePresence } from "../OnlinePresences/OnlinePresence";
+import Chip from "@mui/material/Chip";
 
 interface GuildInfoProps {
     guild: Guild;
@@ -18,39 +19,37 @@ export default function GuildMemberList({guild, updateGuild}: GuildInfoProps) {
     const socket = useSocket();
     
     React.useEffect(() => {
-        setMembers(guild.members);
-    }, [guild])
-    React.useEffect(() => {
-        if (socket) {
-            socket.on("online_members", (data) => {
-                if (members && data) {
-                    const onlineMemberSet = new Set(data);
-                    const filteredOnlineMembers = members.filter(member => {
-                        return onlineMemberSet.has(member.memberId._id);
-                    })
-                    console.log(guild._id);
-                    const filteredOfflineMembers = members.filter(member => {
-                        return !onlineMemberSet.has(member.memberId._id);
-                    })
-                    setOnlineMembers(filteredOnlineMembers);
-                    setOfflineMembers(filteredOfflineMembers);
-                }
-            });
-            socket.on("online_member", (data) => {
-                console.log(data);
-                if (members && data) {
-                    const validMember = members.find(member => member._id === data);
-                    if (validMember && offlineMembers && onlineMembers) {
-                        // Remove the member from offlineMembers
-                        setOfflineMembers(offlineMembers.filter(member => member._id !== validMember._id));
-                
-                        // Add the member to onlineMembers
-                        setOnlineMembers([...onlineMembers, validMember]);
-                    }
-                }
-            });
+        if (guild.members) {
+            setOnlineMembers([]);
+            setOfflineMembers(guild.members);
         }
-    }, [socket, members, guild])
+    }, [guild.members]);
+    
+    React.useEffect(() => {
+        if (socket && guild.members) {
+            socket.on("online_members", (data) => {
+                const onlineMemberSet = new Set(data);
+                const filteredOnlineMembers = guild.members.filter(member => onlineMemberSet.has(member.memberId._id));
+                const filteredOfflineMembers = guild.members.filter(member => !onlineMemberSet.has(member.memberId._id));
+                setOnlineMembers(filteredOnlineMembers);
+                setOfflineMembers(filteredOfflineMembers);
+            });
+    
+            socket.on("online_member", (data) => {
+                const validMember = guild.members.find(member => member.memberId._id === data);
+                if (validMember && offlineMembers && onlineMembers) {
+                    setOfflineMembers(offlineMembers.filter(member => member.memberId._id !== validMember.memberId._id));
+                    setOnlineMembers([...onlineMembers, validMember]);
+                }
+            });
+    
+            return () => {
+                socket.off("online_members");
+                socket.off("online_member");
+            };
+        }
+    }, [socket, guild.members, onlineMembers, offlineMembers]);
+    
     return <Box>
         <Typography variant="button" fontWeight="bold" sx={{mx: 1}}>Online - {onlineMembers && onlineMembers.length}</Typography>
         {onlineMembers && onlineMembers.map && onlineMembers.map((member) => (
@@ -71,6 +70,18 @@ export default function GuildMemberList({guild, updateGuild}: GuildInfoProps) {
                     {member.memberId.onlinePresence && <OnlinePresence onlinePresence={member.memberId.onlinePresence}/>}
                 </Box>
                 <Typography>{member.memberId.username}</Typography>
+                {member.roles.map((role) => (
+                    <Chip
+                    key={role._id}
+                    label={role.name}
+                    size="small"
+                    style={{
+                        backgroundColor: role.color,
+                        color: "#FFFFFF", // Ensures text contrast
+                        fontWeight: "bold",
+                    }}
+                    />
+                ))}
             </Box>
         ))}
         <Typography variant="button" fontWeight="bold" sx={{mx: 1}}>Offline - {offlineMembers && offlineMembers.length}</Typography>

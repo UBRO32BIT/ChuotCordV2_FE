@@ -20,6 +20,9 @@ export interface Guild {
 export interface Role {
     _id: string,
     name: string,
+    color: string,
+    permissionCodes: string[],
+    displayType: string,
 }
 export interface Member {
     _id: string,
