@@ -101,13 +101,20 @@ export default function MessageForm(channel: Channel) {
     }}>
         {/* Image append */}
         {previewUrlList && (
-            <Box sx={{ display: "flex", alignItems: "start", flexWrap: "wrap" }}>
+            <Box sx={{ display: "flex", alignItems: "center", justifyContent: "start", flexWrap: "wrap" }}>
                 {previewUrlList.map((previewUrl, index) => (
                     <Box
                         key={index}
-                        sx={{ position: "relative", margin: 1 }} // Add margin for spacing between images
+                        sx={{
+                            position: "relative",
+                            display: "inline-flex", // Prevent the box from expanding to full width
+                            flexDirection: "column", // Ensure the image and button stack correctly
+                            alignItems: "center", // Align content horizontally to the center of the box
+                            margin: 1,
+                            width: "25%",
+                        }}
                     >
-                        <Box sx={{ display: "inline-block", width: "25%" }}>
+                        <Box sx={{ display: "inline-block" }}>
                             <img src={previewUrl} alt={`Preview ${index}`} style={{ width: "100%" }} />
                         </Box>
                         <IconButton

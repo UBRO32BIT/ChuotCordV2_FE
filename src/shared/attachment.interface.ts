@@ -3,4 +3,5 @@ export interface Attachment {
     type: string,
     url: string,
     fullUrl: string,
+    content?: string,
 }

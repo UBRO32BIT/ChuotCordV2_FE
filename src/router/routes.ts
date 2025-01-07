@@ -1,8 +1,10 @@
 import Chat from "../pages/Chat";
 import Home from "../pages/Home";
 import InvitationPage from "../pages/InvitationPage";
+import LayoutSettings from "../pages/LayoutSettings";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
+import UserSettings from "../pages/UserSettings";
 
 interface Route {
     path: string;
@@ -17,6 +19,14 @@ const privateRoutes: Route[] = [
     {
         path: '/invites/:inviteCode',
         page: InvitationPage
+    },
+    {
+        path: '/user-settings',
+        page: UserSettings,
+    },
+    {
+        path: '/layout-settings',
+        page: LayoutSettings,
     }
 ];
 

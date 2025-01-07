@@ -6,6 +6,9 @@ import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
 import { Attachment } from '../../shared/attachment.interface';
 import { Message } from '../../shared/message.interface';
 import { formatDateTime } from '../../utils/date';
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import { materialDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { getLanguageFromExtension } from '../../utils/file';
 
 export default function MessageComponent(message: Message) {
     const renderAttachment = (attachment: Attachment) => {
@@ -54,6 +57,30 @@ export default function MessageComponent(message: Message) {
                         </video>
                     </Box>
                 );
+            case 'code':
+                const language = getLanguageFromExtension(attachment.fullUrl);
+                return (
+                    <Box
+                        key={attachment._id}
+                        sx={{
+                            mt: 1,
+                            backgroundColor: '#f5f5f5',
+                            borderRadius: '8px',
+                            overflow: 'auto',
+                        }}
+                    >
+                        <SyntaxHighlighter
+                            language={language}
+                            showLineNumbers
+                            wrapLongLines
+                            customStyle={{
+                                fontSize: '12px',
+                            }}
+                        >
+                            {attachment.content || '// Code content not available'}
+                        </SyntaxHighlighter>
+                    </Box>
+                );
             default:
                 // Handle other types (e.g., files)
                 return (
@@ -81,7 +108,7 @@ export default function MessageComponent(message: Message) {
                 );
         }
     };
-    
+
 
     return (
         <Box

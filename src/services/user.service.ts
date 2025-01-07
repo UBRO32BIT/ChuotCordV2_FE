@@ -11,6 +11,33 @@ const getGuildsByUserId = async () => {
         })
 }
 
+const changePassword = async (oldPassword: string, newPassword: string) => {
+    return axiosClient.post(`/users/change-password`, {
+        oldPassword,
+        newPassword
+    })
+        .then((res) => {
+            return res.data.data;
+        })
+        .catch((error) => {
+            console.error(error);
+            throw Error(error.response.data.message)
+        })
+}
+
+const updateInformation = async (data: any) => {
+    return axiosClient.patch(`/users`, data)
+        .then((res) => {
+            return res.data.data;
+        })
+        .catch((error) => {
+            console.error(error);
+            throw Error(error.response.data.message)
+        })
+}
+
 export {
     getGuildsByUserId,
+    changePassword,
+    updateInformation
 }

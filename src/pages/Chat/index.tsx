@@ -9,6 +9,7 @@ import GuildDetails from "../../components/GuildDetails/GuildDetails";
 import GuildAddition from "../../components/GuildAddition/GuildAddition";
 import { useSnackbar } from "notistack";
 import { useSocket } from "../../context/SocketProvider";
+import { RefreshToken } from '../../services/auth.service';
 
 export default function Chat() {
     const socket = useSocket();
@@ -40,7 +41,8 @@ export default function Chat() {
         });
 
         // Handle potential reconnection errors
-        socket.on("connect_error", (err) => {
+        socket.on("connect_error", async (err) => {
+            await RefreshToken();
             enqueueSnackbar(`Reconnect failed: ${err.message}`, { variant: "error" });
         });
     };

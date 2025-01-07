@@ -27,6 +27,7 @@ const action = (snackbarId: any) => (
 );
 export default function GuildDetails() {
   const { guildId } = useParams();
+  const [isLoadedGuild, setIsLoadedGuild] = React.useState<boolean>(false);
   const { enqueueSnackbar } = useSnackbar();
   const socket = useSocket();
   const navigate = useNavigate();
@@ -40,12 +41,10 @@ export default function GuildDetails() {
 
   const fetchGuildDetails = async (guildId: string) => {
     try {
+      setIsLoadedGuild(false);
       const result = await GetGuildById(guildId);
-      if (result) {
-        setGuild(result);
-      }
-      else throw Error("Guild data not found");
-      console.log(result);
+      setGuild(result);
+      setIsLoadedGuild(true);
     }
     catch (error: any) {
       enqueueSnackbar(`${error.message}`, { variant: "error" });
@@ -53,26 +52,23 @@ export default function GuildDetails() {
     }
   }
   const joinGuildSocket = () => {
-    if (guildId) {
+    if (guildId && isLoadedGuild) {
       socket.emit('user_connect_guild', {
         guildId: guildId,
       })
+      console.log("guild loaded");
     }
-    // Clean up the event listener on component unmount
-    // return () => {
-    //     socket.off("chat");
-    // };
   }
   
   React.useEffect(() => {
     if (guildId) {
       fetchGuildDetails(guildId);
+      joinGuildSocket();
     }
-    joinGuildSocket();
   }, [guildId])
 
   return <Grid container>
-    {guild ? (
+    {guild && isLoadedGuild ? (
       <>
         <Grid item md={9.5}>
           <Box>
