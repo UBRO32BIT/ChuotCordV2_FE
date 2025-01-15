@@ -17,6 +17,7 @@ export default function GuildMemberList({guild, updateGuild}: GuildInfoProps) {
     const [onlineMembers, setOnlineMembers] = React.useState<Member[]>();
     const [offlineMembers, setOfflineMembers] = React.useState<Member[]>();
     const [isLoadedMembers, setIsLoadedMembers] = React.useState<boolean>(false);
+    const [isLoadedOnlineMembers, setIsLoadedOnlineMembers] = React.useState<boolean>(false);
     const socket = useSocket();
     
     React.useEffect(() => {
@@ -28,31 +29,39 @@ export default function GuildMemberList({guild, updateGuild}: GuildInfoProps) {
     }, [guild]);
     
     React.useEffect(() => {
-        if (socket && guild.members && isLoadedMembers) {
+        if (socket && guild.members && isLoadedMembers && !isLoadedOnlineMembers) {
             socket.emit("request_online_members", { guildId: guild._id });
-
-            socket.on("online_members", (data) => {
-                console.log(guild._id);
-                const onlineMemberSet = new Set(data);
-                const filteredOnlineMembers = guild.members.filter(member => onlineMemberSet.has(member.memberId._id));
-                const filteredOfflineMembers = guild.members.filter(member => !onlineMemberSet.has(member.memberId._id));
-                setOnlineMembers(filteredOnlineMembers);
-                setOfflineMembers(filteredOfflineMembers);
-            });
-    
-            socket.on("online_member", (data) => {
-                const validMember = guild.members.find(member => member.memberId._id === data);
-                if (validMember && offlineMembers && onlineMembers) {
-                    setOfflineMembers(offlineMembers.filter(member => member.memberId._id !== validMember.memberId._id));
-                    setOnlineMembers([...onlineMembers, validMember]);
-                }
-            });
     
             return () => {
-                socket.off("online_members");
-                socket.off("online_member");
+                socket.off("request_online_members");
             };
         }
+    }, [socket, guild.members, onlineMembers, offlineMembers]);
+
+    React.useEffect(() => {
+        socket.on("online_members", (data) => {
+            console.log(data);
+            const onlineMemberSet = new Set(data);
+            const filteredOnlineMembers = guild.members.filter(member => onlineMemberSet.has(member.memberId._id));
+            const filteredOfflineMembers = guild.members.filter(member => !onlineMemberSet.has(member.memberId._id));
+            setOnlineMembers(filteredOnlineMembers);
+            setOfflineMembers(filteredOfflineMembers);
+            setIsLoadedOnlineMembers(true);
+        });
+        return () => {
+            socket.off("online_members");
+        }
+    }, [socket, guild.members, onlineMembers, offlineMembers]);
+
+    React.useEffect(() => {
+        socket.on("online_member", (data) => {
+            // const validMember = guild.members.find(member => member.memberId._id === data);
+            // if (validMember && offlineMembers && onlineMembers) {
+            //     setOfflineMembers(offlineMembers.filter(member => member.memberId._id !== validMember.memberId._id));
+            //     setOnlineMembers([...onlineMembers, validMember]);
+            // }
+            setIsLoadedOnlineMembers(false);
+        });
     }, [socket, guild.members, onlineMembers, offlineMembers]);
     
     return <Box>

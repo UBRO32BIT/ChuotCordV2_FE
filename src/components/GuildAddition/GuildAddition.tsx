@@ -45,6 +45,7 @@ export default function GuildAddition() {
                 _id: result._id,
                 name: result.name,
                 image: result.image,
+                memberCounts: 1,
             }
             console.log(guilds);
             dispatch(addGuild(newGuild));

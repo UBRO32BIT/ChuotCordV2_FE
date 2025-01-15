@@ -4,12 +4,14 @@ import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import guildsSlice from "./redux/slices/guildsSlice";
 import { enableMapSet } from "immer";
+import darkModeSlice from "./redux/slices/darkModeSlice";
 
 enableMapSet();
 
 const rootReducer = combineReducers({
     user: userSlice,
     guilds: guildsSlice,
+    darkMode: darkModeSlice,
 });
 
 const persistConfig = {

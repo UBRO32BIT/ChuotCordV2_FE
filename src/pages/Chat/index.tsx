@@ -10,16 +10,29 @@ import GuildAddition from "../../components/GuildAddition/GuildAddition";
 import { useSnackbar } from "notistack";
 import { useSocket } from "../../context/SocketProvider";
 import { RefreshToken } from '../../services/auth.service';
+import { setAccessToken } from '../../utils/localStorage';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store';
+import { Helmet } from 'react-helmet';
 
 export default function Chat() {
     const socket = useSocket();
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+    const isDarkMode = useSelector((state: RootState) => state.darkMode.isDarkMode);
+    React.useEffect(() => {
+        if (isDarkMode) {
+          document.body.classList.add('dark');
+        } else {
+          document.body.classList.remove('dark');
+        }
+        console.log(isDarkMode);
+      }, [isDarkMode]);
 
     const fetchSocketStatus = () => {
         if (!socket.connected) {
+            console.log("disconnected");
             enqueueSnackbar(`You are disconnected`, {
                 variant: "error",
-                persist: true,
                 preventDuplicate: true,
                 action: (snackbarId) => (
                     <Button onClick={() => handleReconnect(snackbarId)}>
@@ -27,24 +40,34 @@ export default function Chat() {
                     </Button>
                 ),
             });
+            handleReconnect("");
         }
     };
 
-    const handleReconnect = (snackbarId: any) => {
-        // Attempt to reconnect the socket
-        socket.connect();
+    const handleReconnect = async (snackbarId: any) => {
+        try {
+            console.log("reconnecting");
+            const accessToken = await RefreshToken();
+            socket.auth = { token: "Bearer " + accessToken };
+            setAccessToken(accessToken);
 
-        // Once the socket is connected, dismiss the snackbar
-        socket.on("connect", () => {
-            closeSnackbar(snackbarId);
-            enqueueSnackbar("Reconnected successfully", { variant: "success" });
-        });
+            // Attempt to reconnect the socket
+            socket.connect();
 
-        // Handle potential reconnection errors
-        socket.on("connect_error", async (err) => {
-            await RefreshToken();
-            enqueueSnackbar(`Reconnect failed: ${err.message}`, { variant: "error" });
-        });
+            // Once the socket is connected, dismiss the snackbar
+            socket.on("connect", () => {
+                closeSnackbar(snackbarId);
+                enqueueSnackbar("Reconnected successfully", { variant: "success", preventDuplicate: true });
+            });
+
+            // Handle potential reconnection errors
+            socket.on("connect_error", (err) => {
+                enqueueSnackbar(`Reconnect failed: ${err.message}`, { variant: "error", preventDuplicate: true });
+            });
+        }
+        catch (error) {
+            console.error("Reconnect failed", error);
+        }
     };
 
     React.useEffect(() => {
@@ -56,7 +79,10 @@ export default function Chat() {
     }, []); // Empty dependency array ensures this runs once on mount
 
     return (
-        <Grid container sx={{ height: "100vh" }}>
+        <Grid container sx={{ height: "100vh" }} className="chat-container">
+            <Helmet>
+                <title> Chat | Chuotcord</title>
+            </Helmet>
             <Grid
                 item
                 md={2}

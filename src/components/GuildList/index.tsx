@@ -38,7 +38,7 @@ export const GuildList = () => {
             {guilds && guilds.map ? (
                 guilds.map((guild: any, index: number) => (
                     <Box key={index}>
-                        <Link to={`${guild._id}`} style={{ textDecoration: 'none' }}>
+                        <Link to={`${guild._id}`} style={{ textDecoration: 'none', color: 'var(--color-foreground)' }}>
                             <GuildMiniCard {...guild} />
                         </Link>
                     </Box>

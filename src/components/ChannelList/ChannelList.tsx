@@ -96,7 +96,7 @@ export default function ChannelList({guild, updateGuild}: GuildInfoProps) {
                 to={`channels/${channel._id}`} 
                 style={{ 
                     textDecoration: "none",
-                    color: "black",
+                    color: "var(--color-foreground)",
                 }}
             >
                 <Box sx={{

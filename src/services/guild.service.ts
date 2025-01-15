@@ -43,9 +43,21 @@ const DeleteGuild = async (guildId: string) => {
         throw Error(error.response.data.message)
     })
 }
+
+const GetGuildRoles = async (guildId: string) => {
+    return axiosClient.get(`/guilds/${guildId}/roles`)
+    .then((res) => {
+        return res.data.data;
+    })
+    .catch((error) => {
+        console.error(error);
+        throw Error(error.response.data.message)
+    })
+}
 export {
     GetGuilds,
     GetGuildById,
     CreateGuild,
     DeleteGuild,
+    GetGuildRoles,
 }

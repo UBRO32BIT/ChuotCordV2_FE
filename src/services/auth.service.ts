@@ -12,10 +12,10 @@ const LoginWithCredentials = async (data: LoginData) => {
         })
 }
 
-const Register = async (data: RegisterData) => {
+const RegisterAccount = async (data: RegisterData) => {
     return axiosClient.post(`/auth/register`, data)
         .then((res) => {
-
+            return res.data.data;
         })
         .catch((error) => {
             throw Error(error.response.data.message)
@@ -34,6 +34,6 @@ const RefreshToken = async () => {
 
 export {
     LoginWithCredentials,
-    Register,
+    RegisterAccount,
     RefreshToken,
 }

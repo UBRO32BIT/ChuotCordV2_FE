@@ -10,9 +10,10 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import LogoutIcon from '@mui/icons-material/Logout';
 import AddLinkIcon from '@mui/icons-material/AddLink';
+import ShieldIcon from '@mui/icons-material/Shield';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import MenuList from "@mui/material/MenuList";
-import { Guild, InvitePartial } from "../../shared/guild.interface";
+import { Guild, InvitePartial, Role } from "../../shared/guild.interface";
 import { useDispatch, useSelector } from "react-redux";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -23,7 +24,7 @@ import Button from "@mui/material/Button";
 import React, { ChangeEvent } from "react";
 import * as yup from "yup";
 import { useSnackbar } from "notistack";
-import { DeleteGuild } from "../../services/guild.service";
+import { DeleteGuild, GetGuildRoles } from "../../services/guild.service";
 import { removeGuild } from "../../redux/slices/guildsSlice";
 import { useNavigate } from "react-router-dom";
 import { Avatar, Chip, Divider, TextField } from "@mui/material";
@@ -41,7 +42,7 @@ const updateGuildSchema = yup.object().shape({
     name: yup.string()
         .required("Guild name is required!"),
 })
-export default function GuildSettingsDropdown({guild, updateGuild}: GuildInfoProps) {
+export default function GuildSettingsDropdown({ guild, updateGuild }: GuildInfoProps) {
     const user = useSelector((state: any) => state.user.user);
     const {
         register: registerUpdateGuild,
@@ -52,10 +53,12 @@ export default function GuildSettingsDropdown({guild, updateGuild}: GuildInfoPro
         resolver: yupResolver(updateGuildSchema),
     })
     const [invites, setInvites] = React.useState<InvitePartial[]>([]);
+    const [roles, setRoles] = React.useState<Role[]>([]);
     const [guildImage, setGuildImage] = React.useState<File>();
     const [guildImageSrc, setGuildImageSrc] = React.useState<string>('');
     const [openEditDialog, setOpenEditDialog] = React.useState(false);
     const [openInviteDialog, setOpenInviteDialog] = React.useState(false);
+    const [openManageRoleDialog, setOpenManageRoleDialog] = React.useState(false);
     const [openDisbandDialog, setOpenDisbandDialog] = React.useState(false);
     const { enqueueSnackbar } = useSnackbar();
     const navigate = useNavigate();
@@ -64,6 +67,11 @@ export default function GuildSettingsDropdown({guild, updateGuild}: GuildInfoPro
     const fetchInvites = async () => {
         const result = await GetInvitesByGuildId(guild._id);
         setInvites(result);
+    }
+
+    const fetchRoles = async () => {
+        const result = await GetGuildRoles(guild._id);
+        setRoles(result);
     }
 
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -90,6 +98,10 @@ export default function GuildSettingsDropdown({guild, updateGuild}: GuildInfoPro
     const handleCloseInviteDialog = () => {
         setOpenInviteDialog(false);
     };
+    const handleClickOpenManageRoleDialog = async () => {
+        setOpenManageRoleDialog(true);
+        await fetchRoles();
+    }
 
     const onUpdateGuild = async (event: any) => {
         try {
@@ -129,7 +141,7 @@ export default function GuildSettingsDropdown({guild, updateGuild}: GuildInfoPro
         if (guildImage) {
             const objectUrl = URL.createObjectURL(guildImage);
             setGuildImageSrc(objectUrl);
-        
+
             // Clean up the object URL when the component unmounts or the file changes
             return () => URL.revokeObjectURL(objectUrl);
         } else if (guild.image) {
@@ -173,6 +185,17 @@ export default function GuildSettingsDropdown({guild, updateGuild}: GuildInfoPro
                             }}>
                             <ListItemIcon><AddLinkIcon /></ListItemIcon>
                             <ListItemText>Invite people</ListItemText>
+                        </Box>
+                    </MenuItem>
+                    <MenuItem>
+                        <Box onClick={handleClickOpenManageRoleDialog}
+                            sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 0,
+                            }}>
+                            <ListItemIcon><ShieldIcon /></ListItemIcon>
+                            <ListItemText>Manage roles</ListItemText>
                         </Box>
                     </MenuItem>
                     <MenuItem>
@@ -250,6 +273,51 @@ export default function GuildSettingsDropdown({guild, updateGuild}: GuildInfoPro
                 <Button onClick={handleCloseInviteDialog}>Done</Button>
             </DialogActions>
         </Dialog>
+        <Dialog open={openManageRoleDialog} keepMounted onClose={() => setOpenManageRoleDialog(false)}>
+            <DialogTitle>Manage roles</DialogTitle>
+            <DialogContent>
+                <Box>
+                    <Box sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                    }}>
+                        {roles && roles.map((role) => (
+                            <Box
+                                key={role._id}
+                                sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 1, // Space between the circle and the text
+                                }}
+                            >
+                                {/* Circle representing the role color */}
+                                <Box
+                                    sx={{
+                                        width: 16,
+                                        height: 16,
+                                        borderRadius: "50%",
+                                        backgroundColor: role.color,
+                                        flexShrink: 0, // Prevent the circle from shrinking
+                                    }}
+                                />
+                                {/* Role name */}
+                                <Typography
+                                    sx={{
+                                        fontWeight: "bold",
+                                        color: "#000000", // Customize text color if needed
+                                    }}
+                                >
+                                    {role.name}
+                                </Typography>
+                            </Box>
+                        ))}
+                    </Box>
+                </Box>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={() => setOpenManageRoleDialog(false)}>Done</Button>
+            </DialogActions>
+        </Dialog>
 
         <Dialog
             open={openEditDialog}
@@ -265,30 +333,30 @@ export default function GuildSettingsDropdown({guild, updateGuild}: GuildInfoPro
                         py: 1,
                         rowGap: 1,
                     }}>
-                        <Avatar 
-                            src={guildImageSrc} 
+                        <Avatar
+                            src={guildImageSrc}
                             alt={guild.name}
-                            sx={{ width: 64, height: 64}}
+                            sx={{ width: 64, height: 64 }}
                         />
                         <Box sx={{
                             pb: 3
                         }}>
-                            <input 
-                                type="file" 
+                            <input
+                                type="file"
                                 onChange={handleFileChange}
                                 accept="image/*"
                             />
                             <div>{guildImage && `${guildImage.name} - ${guildImage.type}`}</div>
                         </Box>
-                        <TextField 
+                        <TextField
                             id="name"
                             label="Guild name"
-                            fullWidth 
+                            fullWidth
                             variant="outlined"
                             error={!!updateGuildErrors.name}
                             helperText={updateGuildErrors.name?.message}
                             {...registerUpdateGuild("name")}
-                            defaultValue={guild.name} 
+                            defaultValue={guild.name}
                         />
                     </Box>
                 </form>

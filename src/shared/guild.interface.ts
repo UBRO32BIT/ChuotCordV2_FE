@@ -5,6 +5,7 @@ export interface GuildPartial {
     _id: string,
     name: string,
     image: string | null,
+    memberCounts: number,
 }
 
 export interface Guild {

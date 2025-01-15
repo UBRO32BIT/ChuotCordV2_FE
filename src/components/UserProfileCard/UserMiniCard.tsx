@@ -11,13 +11,18 @@ import { ListItemIcon, ListItemText } from "@mui/material";
 import PersonIcon from '@mui/icons-material/Person';
 import InsertLinkIcon from '@mui/icons-material/InsertLink';
 import LogoutIcon from '@mui/icons-material/Logout';
+import LightModeIcon from '@mui/icons-material/LightMode';
+import BedtimeIcon from '@mui/icons-material/Bedtime';
 import { useNavigate } from "react-router-dom";
 import { logoutUser } from "../../redux/slices/userSlice";
 import { OnlinePresence } from "../OnlinePresences/OnlinePresence";
+import { RootState } from "../../store";
+import { toggleDarkMode } from "../../redux/slices/darkModeSlice";
 
 export const UserMiniCard = () => {
     const user = useSelector((state: any) => state.user.user);
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const isDarkMode = useSelector((state: RootState) => state.darkMode.isDarkMode);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const open = Boolean(anchorEl);
@@ -28,6 +33,9 @@ export const UserMiniCard = () => {
     const handleClose = () => {
         setAnchorEl(null);
     };
+    const handleToggleDarkMode = () => {
+        dispatch(toggleDarkMode());
+    }
     const handleLogout = () => {
         dispatch(logoutUser());
         navigate("/");
@@ -63,7 +71,9 @@ export const UserMiniCard = () => {
                 <IconButton
                     onClick={handleSettingClick}
                 >
-                    <SettingsIcon />
+                    <SettingsIcon sx={{
+                        color: "var(--color-foreground)"
+                    }}/>
                 </IconButton>
                 <Menu
                     id="basic-menu"
@@ -81,6 +91,10 @@ export const UserMiniCard = () => {
                     <MenuItem onClick={handleClose}>
                         <ListItemIcon><InsertLinkIcon /></ListItemIcon>
                         <ListItemText>My invites</ListItemText>
+                    </MenuItem>
+                    <MenuItem onClick={handleToggleDarkMode}>
+                        <ListItemIcon>{isDarkMode ? <BedtimeIcon /> : <LightModeIcon/>}</ListItemIcon>
+                        <ListItemText>{isDarkMode ? "Dark Mode" : "Light Mode"}</ListItemText>
                     </MenuItem>
                     <MenuItem onClick={handleLogout}>
                         <ListItemIcon><LogoutIcon /></ListItemIcon>

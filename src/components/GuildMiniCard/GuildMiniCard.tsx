@@ -21,7 +21,7 @@ export default function GuildMiniCard(guild: GuildPartial) {
                         textAlign: "start"
                     }}>
                         <Typography variant="subtitle1" fontWeight="bold">{guild.name}</Typography>
-                        <Typography variant="body2">123 active</Typography>
+                        <Typography variant="body2">{guild.memberCounts} {guild.memberCounts > 1 ? "members" : "member"}</Typography>
                     </Box>
                 </Box>
             </Box>
