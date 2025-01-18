@@ -101,35 +101,71 @@ export default function MessageForm(channel: Channel) {
     }}>
         {/* Image append */}
         {previewUrlList && (
-            <Box sx={{ display: "flex", alignItems: "center", justifyContent: "start", flexWrap: "wrap" }}>
-                {previewUrlList.map((previewUrl, index) => (
-                    <Box
-                        key={index}
-                        sx={{
-                            position: "relative",
-                            display: "inline-flex", // Prevent the box from expanding to full width
-                            flexDirection: "column", // Ensure the image and button stack correctly
-                            alignItems: "center", // Align content horizontally to the center of the box
-                            margin: 1,
-                            width: "25%",
-                        }}
-                    >
-                        <Box sx={{ display: "inline-block" }}>
-                            <img src={previewUrl} alt={`Preview ${index}`} style={{ width: "100%" }} />
-                        </Box>
-                        <IconButton
-                            onClick={() => removeImage(index)} // Pass the index to the removeImage function
+            <Box
+                sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "start",
+                    flexWrap: "wrap",
+                }}
+            >
+                {fileList.map((file, index) => {
+                    const fileType = file.type.split("/")[0]; // Get the type (e.g., "image", "video")
+                    return (
+                        <Box
+                            key={index}
                             sx={{
-                                position: "absolute",
-                                right: 0,
-                                top: 0,
-                                backgroundColor: "rgba(255,255,255,0.7)"
+                                position: "relative",
+                                display: "inline-flex", // Prevent the box from expanding to full width
+                                flexDirection: "column", // Ensure the image and button stack correctly
+                                alignItems: "center", // Align content horizontally to the center of the box
+                                margin: 1,
+                                width: "25%",
                             }}
                         >
-                            <Cancel01Icon />
-                        </IconButton>
-                    </Box>
-                ))}
+                            <Box sx={{ display: "inline-block", width: "100%" }}>
+                                {fileType === "image" ? (
+                                    <img
+                                        src={previewUrlList[index]}
+                                        alt={`Preview ${index}`}
+                                        style={{ width: "100%" }}
+                                    />
+                                ) : fileType === "video" ? (
+                                    <video
+                                        controls
+                                        src={previewUrlList[index]}
+                                        style={{ width: "100%" }}
+                                    />
+                                ) : (
+                                    <Box
+                                        sx={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            backgroundColor: "rgba(0,0,0,0.1)",
+                                            height: "100px",
+                                            borderRadius: "8px",
+                                        }}
+                                    >
+                                        <InsertDriveFileIcon sx={{ fontSize: 40 }} />
+                                        <Typography variant="body2">{file.name}</Typography>
+                                    </Box>
+                                )}
+                            </Box>
+                            <IconButton
+                                onClick={() => removeImage(index)} // Pass the index to the removeImage function
+                                sx={{
+                                    position: "absolute",
+                                    right: 0,
+                                    top: 0,
+                                    backgroundColor: "rgba(255,255,255,0.7)",
+                                }}
+                            >
+                                <Cancel01Icon />
+                            </IconButton>
+                        </Box>
+                    );
+                })}
             </Box>
         )}
         <form onSubmit={onChatSubmit}>

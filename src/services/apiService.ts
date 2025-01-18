@@ -17,14 +17,17 @@ const refreshAndRetryQueue: RetryQueueItem[] = [];
 // Flag to prevent multiple token refresh requests
 let isRefreshing = false;
 
+const chatServerHost = process.env.REACT_APP_CHAT_SERVER_HOST;
+const chatServerApiUrl = process.env.REACT_APP_CHAT_SERVER_API_URL;
+const clientHost = process.env.REACT_APP_CLIENT_HOST;
 // Axios instance
 const axiosClient = axios.create({
-    baseURL: `http://localhost:8080/v1`,
+    baseURL: chatServerApiUrl,
     headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
         "Access-Control-Allow-Credentials": true,
-        "Access-Control-Allow-Origin": "http://localhost:8080",
+        "Access-Control-Allow-Origin": chatServerHost,
     },
     withCredentials: true,
 });
@@ -76,7 +79,7 @@ export const setupAxiosInterceptors = (dispatch: AppDispatch) => {
 
                         // Clear the token and redirect to login
                         removeAccessToken();
-                        window.location.href = `http://localhost:3000/login`;
+                        window.location.href = `${clientHost}/login`;
                     } finally {
                         isRefreshing = false;
                     }

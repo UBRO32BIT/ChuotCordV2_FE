@@ -13,7 +13,12 @@ import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
+import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import { CreateChannel } from "../../services/channel.service";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import { FormControl } from "@mui/material";
 
 const createChannelSchema = yup.object().shape({
     name: yup.string()
@@ -23,9 +28,10 @@ interface GuildInfoProps {
     guild: Guild;
     updateGuild: (updatedAttributes: Partial<Guild>) => void;
 }
-export default function ChannelList({guild, updateGuild}: GuildInfoProps) {
+export default function ChannelList({ guild, updateGuild }: GuildInfoProps) {
     const [channels, setChannels] = React.useState<ChannelPartial[]>();
     const [openCreateChannelModal, setOpenCreateChannelModal] = React.useState<boolean>(false);
+    const [createChannelType, setCreateChannelType] = React.useState<string>("text");
     const [uploading, setUploading] = React.useState<boolean>(false);
     const { enqueueSnackbar } = useSnackbar();
     const {
@@ -38,16 +44,21 @@ export default function ChannelList({guild, updateGuild}: GuildInfoProps) {
 
     const handleOpenCreateChannelModal = () => setOpenCreateChannelModal(true);
     const handleCloseCreateChannelModal = () => setOpenCreateChannelModal(false);
+    const onChannelTypeChange = (event: SelectChangeEvent) => {
+        setCreateChannelType(event.target.value as string);
+    }
     const onCreateChannelSubmit = async (event: any) => {
         try {
             setUploading(true);
             const data = {
                 name: event.name,
+                type: createChannelType,
             }
             const result = await CreateChannel(guild._id, data);
-            const newChannel : ChannelPartial = {
+            const newChannel: ChannelPartial = {
                 _id: result._id,
                 name: result.name,
+                type: result.type,
             }
             setChannels([...(channels || []), newChannel]);
             const updatedChannelList = [...(channels || []), newChannel];
@@ -64,6 +75,9 @@ export default function ChannelList({guild, updateGuild}: GuildInfoProps) {
             setOpenCreateChannelModal(false);
         }
     }
+    const handleVoiceChannelClick = (channelId: string) => {
+        console.log(`Voice channel clicked: ${channelId}`);
+    }
     const style = {
         position: 'absolute' as 'absolute',
         top: '50%',
@@ -79,70 +93,106 @@ export default function ChannelList({guild, updateGuild}: GuildInfoProps) {
     React.useEffect(() => {
         setChannels(guild.channels);
     }, [guild])
+
     return <Box>
         <Box sx={{
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
         }}>
-            <Typography variant="button" fontWeight="bold" sx={{mx: 1}}>Channels - {channels && channels.length}</Typography>
+            <Typography variant="button" fontWeight="bold" sx={{ mx: 1 }}>Channels - {channels && channels.length}</Typography>
             <IconButton onClick={handleOpenCreateChannelModal}>
-                <AddIcon fontSize="small"/>
+                <AddIcon fontSize="small" />
             </IconButton>
         </Box>
         {channels && channels.map && channels.map((channel) => (
-            <Link 
-                key={channel._id}
-                to={`channels/${channel._id}`} 
-                style={{ 
-                    textDecoration: "none",
-                    color: "var(--color-foreground)",
-                }}
-            >
-                <Box sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1,
-                    p: 1
-                }}>
-                    <TagIcon />
+            channel.type === "voice" ? (
+                // Render voice channel as a non-link and call a function on click
+                <Box
+                    key={channel._id}
+                    sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                        p: 1,
+                        cursor: "pointer",
+                        '&:hover': { backgroundColor: "rgba(0, 0, 0, 0.1)" }
+                    }}
+                    onClick={() => handleVoiceChannelClick(channel._id)}
+                >
+                    <VolumeUpIcon />
                     <Typography>{channel.name}</Typography>
                 </Box>
-            </Link>
+            ) : (
+                // Render text channel as a Link
+                <Link
+                    key={channel._id}
+                    to={`channels/${channel._id}`}
+                    style={{
+                        textDecoration: "none",
+                        color: "var(--color-foreground)",
+                    }}
+                >
+                    <Box sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                        p: 1
+                    }}>
+                        <TagIcon />
+                        <Typography>{channel.name}</Typography>
+                    </Box>
+                </Link>
+            )
         ))}
+
         <Modal
-                open={openCreateChannelModal}
-                onClose={handleCloseCreateChannelModal}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-            >
-                <Box sx={style}>
-                    <Typography id="modal-modal-title" variant="h6" component="h2">
-                        New Channel
-                    </Typography>
-                    {/* <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            open={openCreateChannelModal}
+            onClose={handleCloseCreateChannelModal}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+        >
+            <Box sx={style}>
+                <Typography id="modal-modal-title" variant="h6" component="h2">
+                    New Channel
+                </Typography>
+                {/* <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                         Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
                     </Typography> */}
-                    <form onSubmit={handleCreateChannelSubmit(onCreateChannelSubmit)}>
-                        <TextField
-                            margin="normal"
-                            fullWidth
-                            id="name"
-                            label="Channel name"
-                            autoComplete="email"
-                            autoFocus
-                            error={!!createChannelErrors.name}
-                            helperText={createChannelErrors.name?.message}
-                            {...registerCreateChannel("name")}
-                        />
-                        <Button 
-                            type='submit' 
-                            color='primary' 
-                            variant="contained" 
-                            fullWidth
-                        >Create</Button>
-                    </form>
-                </Box>
-            </Modal>
+                <form onSubmit={handleCreateChannelSubmit(onCreateChannelSubmit)}>
+                    <TextField
+                        margin="normal"
+                        fullWidth
+                        id="name"
+                        label="Channel name"
+                        autoComplete="email"
+                        autoFocus
+                        error={!!createChannelErrors.name}
+                        helperText={createChannelErrors.name?.message}
+                        {...registerCreateChannel("name")}
+                    />
+                    <FormControl fullWidth>
+                        <InputLabel id="channel-type-select-lable">Channel type</InputLabel>
+                        <Select
+                            labelId="channel-type-select-lable"
+                            id="demo-simple-select"
+                            name="type"
+                            value={createChannelType}
+                            onChange={onChannelTypeChange}
+                            label="Channel type"
+                        >
+                            <MenuItem value={"text"}>Text channel</MenuItem>
+                            <MenuItem value={"voice"}>Voice channel</MenuItem>
+                        </Select>
+                    </FormControl>
+                    <Button
+                        type='submit'
+                        color='primary'
+                        variant="contained"
+                        fullWidth
+                    >Create</Button>
+                </form>
+            </Box>
+        </Modal>
     </Box>
 }

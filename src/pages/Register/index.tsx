@@ -207,9 +207,9 @@ export default function Register() {
                         Forgot password?
                     </Link>
                 </Typography>
-                <Typography variant="body2">Do you have an account?</Typography>
-                <Link href="#" variant="body2">
-                    Register now
+                <Typography variant="body2">Already have an account?</Typography>
+                <Link href="/login" variant="body2">
+                    Login now
                 </Link>
             </Paper>
         </Grid>

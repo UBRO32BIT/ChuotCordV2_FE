@@ -170,8 +170,8 @@ export default function Login() {
                         Forgot password?
                     </Link>
                 </Typography>
-                <Typography variant="body2">Do you have an account?</Typography>
-                <Link href="#" variant="body2">
+                <Typography variant="body2">Don't have an account?</Typography>
+                <Link href="/register" variant="body2">
                     Register now
                 </Link>
             </Paper>

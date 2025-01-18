@@ -34,12 +34,14 @@ export interface Member {
 export interface ChannelPartial {
     _id: string,
     name: string,
+    type: string,
 }
 export interface Channel {
     _id: string,
     name: string,
     roles: Role[],
     messages: Message[],
+    type: string,
 }
 export interface InvitePartial {
     _id: string,

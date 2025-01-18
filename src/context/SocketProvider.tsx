@@ -1,10 +1,16 @@
 import React, { createContext, useContext } from 'react';
 import { io } from 'socket.io-client';
 
-const socket = io("http://localhost:8080", {
+if (!process.env.REACT_APP_CHAT_SERVER_HOST) {
+  throw new Error("REACT_APP_CHAT_SERVER_HOST is not defined in the environment variables.");
+}
+
+const socket = io(process.env.REACT_APP_CHAT_SERVER_HOST, {
   auth: {
     token: `Bearer ${localStorage.getItem("accessToken")}`
-  }
+  },
+  transports: ['websocket'], 
+  rejectUnauthorized: false,
 });
 
 const SocketContext = createContext(socket);
